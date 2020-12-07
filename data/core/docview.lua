@@ -302,6 +302,8 @@ function DocView:draw_line_text(idx, x, y)
   end
 end
 
+-- New color to selection --
+style.highlight_select = {common.color('#57575E')}
 
 function DocView:draw_line_body(idx, x, y)
   local line, col = self.doc:get_selection()
@@ -315,7 +317,7 @@ function DocView:draw_line_body(idx, x, y)
     local x1 = x + self:get_col_x_offset(idx, col1)
     local x2 = x + self:get_col_x_offset(idx, col2)
     local lh = self:get_line_height()
-    renderer.draw_rect(x1, y, x2 - x1, lh, style.selection)
+    renderer.draw_rect(x1, y, x2 - x1, lh, style.highlight_select)
   end
 
   -- draw line highlight if caret is on this line

@@ -141,6 +141,8 @@ function View:draw_scrollbar()
   local highlight = self.hovered_scrollbar or self.dragging_scrollbar
   local color = highlight and style.scrollbar2 or style.scrollbar
   renderer.draw_rect(x, y, w, h, color)
+
+  return color, color ~= style.scrollbar
 end
 
 
