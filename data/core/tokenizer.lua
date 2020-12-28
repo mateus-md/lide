@@ -47,6 +47,11 @@ local function find_non_escaped(text, pattern, offset, esc)
     end
 end
 
+function tokenizer.add_macro(lang, macro)
+
+
+end
+
 function tokenizer.tokenize(syntax, text, state)
 
     local res = {}

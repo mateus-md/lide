@@ -123,7 +123,7 @@ core.add_thread(function()
         end
 
         -- update symbols list
-        autocomplete.add { name = "open-docs", items = symbols }
+        autocomplete.add({name = "open-docs", items = symbols})
 
         -- wait for next scan
         local valid = true

@@ -3,11 +3,11 @@ local keymap = require('core.keymap')
 local config = require('core.config')
 local style  = require('core.style')
 
-require('user.colors.fall')
+require('user.colors.monokai')
 
 -- Personal configuration --
-config.motiontrail_steps = 640
-config.memusage_active = true
+config.motiontrail_steps = 0640
+config.memusage_active   = true
 config.indent_size = 4
 
 keymap.add({
