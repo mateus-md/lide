@@ -3,7 +3,7 @@ local keymap = require('core.keymap')
 local config = require('core.config')
 local style  = require('core.style')
 
---require('user.colors.fall')
+require('user.colors.fall')
 
 -- Personal configuration --
 config.motiontrail_steps = 640

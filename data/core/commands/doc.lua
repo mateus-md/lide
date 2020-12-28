@@ -249,7 +249,7 @@ local commands = {
 
         if doc():has_selection() then
 
-            insert_at_start_of_selected_lines(text)
+            insert_at_start_of_selected_lines(text, true)
         else
 
             doc():text_input(text)

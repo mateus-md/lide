@@ -1,3 +1,4 @@
 .git/
 .gitattributes
 lite
+data/user/init.lua
