@@ -1,8 +1,0 @@
-.git/
-!\.gitignore
-!\.gitattributes
-!\.lite_last_project
-.*
-lite
-TODO
-data/user/init.lua
