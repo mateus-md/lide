@@ -2,6 +2,7 @@ local syntax = require "core.syntax"
 
 syntax.add({
 
+    lang  = "c",
     files = {"%.c$", "%.h$", "%.inl$", "%.cpp$", "%.hpp$"},
     comment = "//",
 

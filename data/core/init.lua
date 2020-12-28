@@ -223,18 +223,8 @@ function core.load_plugins()
         local modname = "plugins." .. filename:gsub(".lua$", "")
         local ok = core.try(require, modname)
 
-        if ok then
-
-            core.log_quiet("loaded plugin %q", modname)
-            if modname:match('lang_%d+.lua') then
-
-                if not core.langs then core.langs = {} end
-                core.langs[modname] = require(modname).macros
-            end
-        else
-
-            no_errors = false
-        end
+        if ok then core.log_quiet("loaded plugin %q", modname)
+        else no_errors = false end
     end
 
     return no_errors

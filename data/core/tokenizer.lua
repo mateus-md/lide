@@ -47,11 +47,6 @@ local function find_non_escaped(text, pattern, offset, esc)
     end
 end
 
-function tokenizer.add_macro(lang, macro)
-
-
-end
-
 function tokenizer.tokenize(syntax, text, state)
 
     local res = {}
@@ -86,7 +81,7 @@ function tokenizer.tokenize(syntax, text, state)
 
         for p in pairs(syntax.symbols) do
 
-            local s, e, k = text:find('^(' .. p .. ')[%s]', i)
+            local s, e, k = text:find('^(' .. p .. ')%s', i)
 
             if s then
 

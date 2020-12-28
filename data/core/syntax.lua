@@ -26,6 +26,7 @@ function syntax.get(filename, header)
 
     return find(filename, 'files')
     or find(header, 'headers')
+    or find(filename, 'lang')
     or plain_text_syntax
 end
 

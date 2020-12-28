@@ -1,6 +1,7 @@
 local syntax = require "core.syntax"
 
 syntax.add {
+  lang  = "xml",
   files = { "%.xml$", "%.html?$" },
   headers = "<%?xml",
   patterns = {

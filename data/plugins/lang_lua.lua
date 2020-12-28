@@ -1,7 +1,8 @@
 local syntax = require "core.syntax"
 
-syntax.add {
+syntax.add({
 
+    lang  = "lua",
     files = "%.lua$",
     headers = "^#!.*[ /]lua",
     comment = "--",
@@ -50,5 +51,4 @@ syntax.add {
        ["false"]    = "literal",
        ["nil"]      = "literal",
     },
-}
-
+})

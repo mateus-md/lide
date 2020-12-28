@@ -18,7 +18,7 @@ local function doc()
     return core.active_view.doc
 end
 
-local function get_indent_string()
+local function get_indent_string(line, rem)
 
     if config.tab_type == "hard" then
 
@@ -26,47 +26,83 @@ local function get_indent_string()
     end
 
     local _doc = doc()
-    local line, coll = _doc:get_selection()
-    local text = _doc:get_text(line, 1, line, coll)
+    if not line then
 
-    return string.rep(' ', config.indent_size - #text % config.indent_size)
+        local line, coll = _doc:get_selection()
+        local text = _doc:get_text(line, 1, line, coll)
+
+        local space = text:match('^(%s*).*')
+        return string.rep(' ', config.indent_size - math.max(#space, 1) % config.indent_size)
+    else
+
+        local space = line:match('^(%s*).*')
+        if rem then
+
+            local count = #space % config.indent_size
+            if count == 0 then count = config.indent_size end
+
+            return string.rep(' ', count)
+        else
+
+            local count = config.indent_size - #space % config.indent_size
+            return string.rep(' ', count)
+        end
+    end
 end
 
 local function insert_at_start_of_selected_lines(text, skip_empty)
 
-    local line1, col1, line2, col2, swap = doc():get_selection(true)
+    assert(type(text) == "string" or type(text) == "function")
+
+    local _doc = doc()
+    local ftab, ltab
+    local line1, col1, line2, col2, swap = _doc:get_selection(true)
 
     for line = line1, line2 do
 
-        local line_text = doc().lines[line]
+        local line_text = _doc.lines[line]
 
         if (not skip_empty or line_text:find("%S")) then
 
-            doc():insert(line, 1, text)
+            if type(text) == "function" then
+
+                ltab = text(_doc.lines[line])
+                if not ftab then ftab = ltab end
+
+                _doc:insert(line, 1, ltab)
+
+            else _doc:insert(line, 1, text) end
         end
     end
 
-    doc():set_selection(line1, col1 + #text, line2, col2 + #text, swap)
+    _doc:set_selection(line1, col1 + #ftab, line2, col2 + #ltab, swap)
 end
 
 local function remove_from_start_of_selected_lines(text, skip_empty)
 
-    local line1, col1, line2, col2, swap = doc():get_selection(true)
+    assert(type(text) == "string" or type(text) == "function")
+
+    local _doc = doc()
+    local line1, col1, line2, col2, swap = _doc:get_selection(true)
 
     if line2 > line1 and col2 == 1 then
 
         line2 = line2 - 1
-        col2 = #doc().lines[line2]
+        col2 = #_doc.lines[line2]
     end
 
     for line = line1, line2 do
 
-        local line_text = doc().lines[line]
+        local line_text = _doc.lines[line]
+
+        if type(text) == "function" then
+            text = text(line_text, true)
+        end
 
         if line_text:sub(1, #text) == text
         and (not skip_empty or line_text:find("%S")) then
 
-            doc():remove(line, 1, line, #text + 1)
+            _doc:remove(line, 1, line, #text + 1)
         end
     end
 
@@ -245,21 +281,18 @@ local commands = {
 
     ["doc:indent"] = function()
 
-        local text = get_indent_string()
-
         if doc():has_selection() then
 
-            insert_at_start_of_selected_lines(text, true)
+            insert_at_start_of_selected_lines(get_indent_string, true)
         else
 
-            doc():text_input(text)
+            doc():text_input(get_indent_string())
         end
     end,
 
     ["doc:unindent"] = function()
 
-        local text = get_indent_string()
-        remove_from_start_of_selected_lines(text)
+        remove_from_start_of_selected_lines(get_indent_string, true)
     end,
 
     ["doc:duplicate-lines"] = function()

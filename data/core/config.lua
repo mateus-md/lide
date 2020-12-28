@@ -21,7 +21,7 @@ return {
     tab_type = "soft",
 
     line_limit = 80,
-    max_symbols = 2048,
+    max_symbols = 1024,
 
     highlight_current_line = true,
 }
