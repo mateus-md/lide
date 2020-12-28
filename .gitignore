@@ -1,6 +1,6 @@
 .git/
-.gitattributes
+!\.gitignore
+.*
 lite
 TODO
 data/user/init.lua
-.lite_*
