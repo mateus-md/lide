@@ -2,3 +2,4 @@
 .gitattributes
 lite
 data/user/init.lua
+.lite_*
