@@ -1,5 +1,6 @@
-local common = require "core.common"
-local config = require "core.config"
+local core   = require("core")
+local common = require("core.common")
+local config = require("core.config")
 
 -- functions for translating a Doc position to another position these functions
 -- can be passed to Doc:move_to|select_to|delete_to()
@@ -114,7 +115,13 @@ end
 
 
 function translate.start_of_line(doc, line, col)
-  return line, 1
+
+    local line, coln = core.active_view.doc:get_selection()
+    local text = core.active_view.doc.lines[line]
+    local fend = text:find('[^ ]')
+
+    if coln == fend then return line, 1
+    else return line, fend end
 end
 
 

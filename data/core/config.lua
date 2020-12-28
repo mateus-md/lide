@@ -1,20 +1,27 @@
-local config = {}
+return {
 
-config.project_scan_rate = 5
-config.fps = 60
-config.max_log_items = 80
-config.message_timeout = 3
-config.mouse_wheel_scroll = 50 * SCALE
-config.file_size_limit = 10
-config.ignore_files = "^%."
-config.symbol_pattern = "[%a_][%w_]*"
-config.non_word_chars = " \t\n/\\()\"':,.;<>~!@#$%^&*|+=[]{}`?-"
-config.undo_merge_timeout = 0.3
-config.max_undos = 10000
-config.highlight_current_line = true
-config.line_height = 1.2
-config.indent_size = 2
-config.tab_type = "soft"
-config.line_limit = 80
+    fps = 60,
+    project_scan_rate = 5,
 
-return config
+    max_log_items = 80,
+    file_size_limit = 10,
+    message_timeout = 3,
+    mouse_wheel_scroll = 50 * SCALE,
+
+    ignore_files = "^%.",
+    symbol_pattern = "[%a_][%w_]*",
+    non_word_chars = " \t\n/\\()\"':,.;<>~!@#$%^&*|+=[]{}`?-",
+
+    undo_merge_timeout = 0.3,
+    max_undos = 10000,
+
+    line_height = 1.2,
+
+    indent_size = 2,
+    tab_type = "soft",
+
+    line_limit = 80,
+    max_symbols = 2048,
+
+    highlight_current_line = true,
+}

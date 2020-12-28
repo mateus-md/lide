@@ -294,16 +294,21 @@ end
 
 
 function DocView:draw_line_text(idx, x, y)
-  local tx, ty = x, y + self:get_line_text_y_offset()
-  local font = self:get_font()
-  for _, type, text in self.doc.highlighter:each_token(idx) do
-    local color = style.syntax[type]
-    tx = renderer.draw_text(font, text, tx, ty, color)
-  end
+
+    local tx, ty = x, y + self:get_line_text_y_offset()
+    local font = self:get_font()
+
+    for _, type, text in self.doc.highlighter:each_token(idx) do
+
+        local color = style.syntax[type]
+
+        if type ~= {} and text then
+
+            tx = renderer.draw_text(font, text, tx, ty, color)
+        end
+    end
 end
 
--- New color to selection --
-style.highlight_select = {common.color('#57575E')}
 
 function DocView:draw_line_body(idx, x, y)
   local line, col = self.doc:get_selection()
@@ -317,7 +322,7 @@ function DocView:draw_line_body(idx, x, y)
     local x1 = x + self:get_col_x_offset(idx, col1)
     local x2 = x + self:get_col_x_offset(idx, col2)
     local lh = self:get_line_height()
-    renderer.draw_rect(x1, y, x2 - x1, lh, style.highlight_select)
+    renderer.draw_rect(x1, y, x2 - x1, lh, style.selection)
   end
 
   -- draw line highlight if caret is on this line

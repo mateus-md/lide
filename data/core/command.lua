@@ -5,7 +5,6 @@ command.map = {}
 
 local always_true = function() return true end
 
-
 function command.add(predicate, map)
   predicate = predicate or always_true
   if type(predicate) == "string" then

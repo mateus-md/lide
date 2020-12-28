@@ -28,15 +28,15 @@ style.scrollbar = { common.color "#414146" }
 style.scrollbar2 = { common.color "#4b4b52" }
 
 style.syntax = {}
-style.syntax["normal"] = { common.color "#e1e1e6" }
-style.syntax["symbol"] = { common.color "#e1e1e6" }
-style.syntax["comment"] = { common.color "#676b6f" }
-style.syntax["keyword"] = { common.color "#E58AC9" }
-style.syntax["keyword2"] = { common.color "#F77483" }
-style.syntax["number"] = { common.color "#FFA94D" }
-style.syntax["literal"] = { common.color "#FFA94D" }
-style.syntax["string"] = { common.color "#f7c95c" }
-style.syntax["operator"] = { common.color "#93DDFA" }
-style.syntax["function"] = { common.color "#93DDFA" }
+style.syntax["normal"]   = {common.color "#e1e1e6"}
+style.syntax["symbol"]   = {common.color "#e1e1e6"}
+style.syntax["comment"]  = {common.color "#676b6f"}
+style.syntax["keyword"]  = {common.color "#E58AC9"}
+style.syntax["keyword2"] = {common.color "#F77483"}
+style.syntax["number"]   = {common.color "#FFA94D"}
+style.syntax["literal"]  = {common.color "#FFA94D"}
+style.syntax["string"]   = {common.color "#f7c95c"}
+style.syntax["operator"] = {common.color "#93DDFA"}
+style.syntax["function"] = {common.color "#93DDFA"}
 
 return style

@@ -1,13 +1,23 @@
--- put user settings here
--- this module will be loaded after everything else when the application starts
+local common = require('core.common')
+local keymap = require('core.keymap')
+local config = require('core.config')
+local style  = require('core.style')
 
-local keymap = require "core.keymap"
-local config = require "core.config"
-local style = require "core.style"
+--require('user.colors.fall')
 
--- light theme:
--- require "user.colors.summer"
+-- Personal configuration --
+config.motiontrail_steps = 640
+config.memusage_active = true
+config.indent_size = 4
 
--- key binding:
--- keymap.add { ["ctrl+escape"] = "core:quit" }
+keymap.add({
 
+    ["alt+escape"]   = "core:quit",
+    ["ctrl+shift+f"] = "core:toggle-fullscreen",
+})
+
+-- Delete old commands --
+keymap.map["ctrl+w"] = nil
+keymap.map["alt+return"] = nil
+
+style.divider_size = common.round(2 * SCALE)

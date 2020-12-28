@@ -115,7 +115,7 @@ function CommandView:enter(text, submit, suggest, cancel)
   core.set_active_view(self)
   self:update_suggestions()
   self.gutter_text_brightness = 100
-  self.label = text .. ": "
+  self.label = text .. ' '
 end
 
 

@@ -23,7 +23,7 @@ local function reload_doc(doc)
 
   update_time(doc)
   doc:clean()
-  core.log_quiet("Auto-reloaded doc \"%s\"", doc.filename)
+  core.log_quiet("auto-reloaded doc \"%s\"", doc.filename)
 end
 
 

@@ -18,14 +18,14 @@ command.add(nil, {
 
   ["core:toggle-fullscreen"] = function()
     fullscreen = not fullscreen
-    system.set_window_mode(fullscreen and "fullscreen" or "normal")
+    system.set_window_mode(fullscreen and "maximized" or "normal")
   end,
 
   ["core:reload-module"] = function()
-    core.command_view:enter("Reload Module", function(text, item)
-      local text = item and item.text or text
+    core.command_view:enter('reload module', function(text, item)
+      text = item and item.text or text
       core.reload_module(text)
-      core.log("Reloaded module %q", text)
+      core.log('module %q reloaded', text)
     end, function(text)
       local items = {}
       for name in pairs(package.loaded) do
@@ -37,7 +37,7 @@ command.add(nil, {
 
   ["core:find-command"] = function()
     local commands = command.get_all_valid()
-    core.command_view:enter("Do Command", function(text, item)
+    core.command_view:enter('execute', function(text, item)
       if item then
         command.perform(item.command)
       end
