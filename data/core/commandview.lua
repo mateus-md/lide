@@ -5,7 +5,6 @@ local Doc = require "core.doc"
 local DocView = require "core.docview"
 local View = require "core.view"
 
-
 local SingleLineDoc = Doc:extend()
 
 function SingleLineDoc:insert(line, col, text)

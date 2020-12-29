@@ -32,18 +32,17 @@ local visible = false
 
 function console.clear()
 
-    output = {
-
-        {text = "", time = 0}
-    }
+    output = {{text = "", time = 0}}
 end
 
 local function read_file(filename, offset)
 
     local fp = io.open(filename, "rb")
     fp:seek("set", offset or 0)
+
     local res = fp:read("*a")
     fp:close()
+
     return res
 end
 
@@ -69,7 +68,7 @@ local function push_output(str, opt)
             line = table.remove(output).text .. line
         end
 
-        line = line:gsub("\x1b%[[%d;]+m", '') -- strip ANSI colors
+        line = line:gsub('\x1b%[[%d;]+m', '') -- strip ANSI colors
         table.insert(output, {
 
             file_pattern = opt.file_pattern,

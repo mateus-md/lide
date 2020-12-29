@@ -15,12 +15,18 @@ config.autoinsert_map = {
 }
 
 local function is_closer(chr)
+
     for _, v in pairs(config.autoinsert_map) do
-        if v == chr then
-            return true
-        end
+
+        if v == chr then return true end
     end
 end
+
+local function are_pairs(chr, otr)
+
+    return chr == config.autoinsert_map[otr]
+end
+
 
 local function count_char(text, chr)
     local count = 0
@@ -83,24 +89,33 @@ end
 
 command.add(predicate, {
     ["autoinsert:backspace"] = function()
-        local doc = core.active_view.doc
+
+        local doc  = core.active_view.doc
         local l, c = doc:get_selection()
-        local chr = doc:get_char(l, c)
-        if config.autoinsert_map[doc:get_char(l, c - 1)] and is_closer(chr) then
-        doc:delete_to(1)
+        local char = doc:get_char(l, c)
+        local othr = doc:get_char(l, c - 1)
+
+        -- Only match with its respective pairs --
+        if  is_closer(char)
+        and are_pairs(char, othr) then
+
+            doc:delete_to(1)
         end
-        command.perform "doc:backspace"
+
+        command.perform('doc:backspace')
     end,
 
     ["autoinsert:delete-to-previous-word-start"] = function()
+
         local doc = core.active_view.doc
         local le, ce = translate.previous_word_start(doc, doc:get_selection())
+
         while true do
-        local l, c = doc:get_selection()
-        if l == le and c == ce then
-            break
-        end
-        command.perform "autoinsert:backspace"
+
+            local l, c = doc:get_selection()
+
+            if l == le and c == ce then break end
+            command.perform('autoinsert:backspace')
         end
     end,
 })
