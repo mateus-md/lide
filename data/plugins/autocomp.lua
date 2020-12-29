@@ -12,14 +12,14 @@ local translate = require('core.doc.translate')
 local rootview  = require('core.rootview')
 local docview   = require('core.docview')
 
-config.autocomplete_max_suggestions = 8
+config.autocomp_max_suggestions = 8
 
-local autocomplete = {}
-autocomplete.map = {}
+local autocomp = {}
+autocomp.map = {}
 
 local mt = {__tostring = function(t) return t.text end}
 
-function autocomplete.add(t)
+function autocomp.add(t)
 
     local items = {}
     for text, info in pairs(t.items) do
@@ -27,7 +27,7 @@ function autocomplete.add(t)
         table.insert(items, setmetatable({text = text, info = info}, mt))
     end
 
-    autocomplete.map[t.name] =  {files = t.files or ".*", items = items}
+    autocomp.map[t.name] =  {files = t.files or '.*', items = items}
 end
 
 local mxsym = config.max_symbols or 512
@@ -40,7 +40,7 @@ core.add_thread(function()
 
         if doc.disable_symbols then return {} end
 
-        for _, map in pairs(autocomplete.map) do
+        for _, map in pairs(autocomp.map) do
 
             local temp, _rep = {}, {}
             for idx, itm in pairs(map.items) do
@@ -72,11 +72,12 @@ core.add_thread(function()
                         doc.disable_symbols = true
 
                         core.status_view:show_message('!', style.accent,
-                        'The file ' .. doc.filename ..
-                        'is too big. Disableing autocomplete for this document.')
+                        'the file ' .. doc.filename ..
+                        ' is too big - disableing autocomplete.')
 
                         collectgarbage('collect')
                         return {}
+
                     else doc.disable_symbols = false end
 
                     s[sym] = true
@@ -123,7 +124,7 @@ core.add_thread(function()
         end
 
         -- update symbols list
-        autocomplete.add({name = "open-docs", items = symbols})
+        autocomp.add({name = "open-docs", items = symbols})
 
         -- wait for next scan
         local valid = true
@@ -159,7 +160,7 @@ local function update_suggestions()
 
     -- get all relevant suggestions for given filename
     local items = {}
-    for _, v in pairs(autocomplete.map) do
+    for _, v in pairs(autocomp.map) do
 
         if common.match_pattern(filename, v.files) then
 
@@ -174,7 +175,7 @@ local function update_suggestions()
     items = common.fuzzy_match(items, partial)
     local j = 1
 
-    for i = 1, config.autocomplete_max_suggestions do
+    for i = 1, config.autocomp_max_suggestions do
 
         suggestions[i] = items[j]
 
@@ -265,7 +266,8 @@ end
 -- patch event logic into RootView
 local on_text_input = rootview.on_text_input
 local update = rootview.update
-local draw = rootview.draw
+
+local drawapi = require('core.draw_api')
 
 rootview.on_text_input = function(...)
 
@@ -311,17 +313,18 @@ rootview.update = function(...)
     end
 end
 
-rootview.draw = function(...)
+drawapi.root_view('autocomp', {
 
-    draw(...)
+    perform = function()
 
-    local av = get_active_view()
-    if av then
+        local av = get_active_view()
+        if av then
 
-        -- draw suggestions box after everything else
-        core.root_view:defer_draw(draw_suggestions_box, av)
+            -- draw suggestions box after everything else --
+            core.root_view:defer_draw(draw_suggestions_box, av)
+        end
     end
-end
+})
 
 local function predicate()
 
@@ -330,7 +333,7 @@ end
 
 command.add(predicate, {
 
-    ["autocomplete:complete"] = function()
+    ["autocomp:complete"] = function()
 
         local doc       = core.active_view.doc
         local line, col = doc:get_selection()
@@ -343,7 +346,7 @@ command.add(predicate, {
         reset_suggestions()
     end,
 
-    ["autocomplete:previous"] = function()
+    ["autocomp:previous"] = function()
 
         local nxt = suggestions_idx - 1
 
@@ -355,7 +358,7 @@ command.add(predicate, {
         else suggestions_idx = nxt end
     end,
 
-    ["autocomplete:next"] = function()
+    ["autocomp:next"] = function()
 
         local nxt = suggestions_idx + 1
 
@@ -366,18 +369,18 @@ command.add(predicate, {
         else suggestions_idx = nxt end
     end,
 
-    ["autocomplete:cancel"] = function()
+    ["autocomp:cancel"] = function()
 
         reset_suggestions()
     end,
 })
 
-keymap.add {
+keymap.add({
 
-    ["tab"]    = "autocomplete:complete",
-    ["up"]     = "autocomplete:previous",
-    ["down"]   = "autocomplete:next",
-    ["escape"] = "autocomplete:cancel",
-}
+    ["tab"]    = "autocomp:complete",
+    ["up"]     = "autocomp:previous",
+    ["down"]   = "autocomp:next",
+    ["escape"] = "autocomp:cancel",
+})
 
-return autocomplete
+return autocomp

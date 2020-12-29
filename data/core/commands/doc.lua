@@ -32,7 +32,7 @@ local function get_indent_string(line, rem)
         local text = _doc:get_text(line, 1, line, coll)
 
         local space = text:match('^(%s*).*')
-        return string.rep(' ', config.indent_size - math.max(#space, 1) % config.indent_size)
+        return string.rep(' ', config.indent_size - #space % config.indent_size)
     else
 
         local space = line:match('^(%s*).*')

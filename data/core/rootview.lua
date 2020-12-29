@@ -91,26 +91,36 @@ function Node:consume(node)
 end
 
 
-local type_map = { up="vsplit", down="vsplit", left="hsplit", right="hsplit" }
+local type_map = {up = "vsplit", down = "vsplit", left = "hsplit", right = "hsplit"}
 
 function Node:split(dir, view, locked)
-  assert(self.type == "leaf", "Tried to split non-leaf node")
-  local type = assert(type_map[dir], "Invalid direction")
-  local last_active = core.active_view
-  local child = Node()
-  child:consume(self)
-  self:consume(Node(type))
-  self.a = child
-  self.b = Node()
-  if view then self.b:add_view(view) end
-  if locked then
-    self.b.locked = locked
-    core.set_active_view(last_active)
-  end
-  if dir == "up" or dir == "left" then
-    self.a, self.b = self.b, self.a
-  end
-  return child
+
+    assert(self.type == "leaf", "Tried to split non-leaf node")
+
+    local type = assert(type_map[dir], "Invalid direction")
+    local last_active = core.active_view
+    local child = Node()
+
+    child:consume(self)
+
+    self:consume(Node(type))
+    self.a = child
+    self.b = Node()
+
+    if view then self.b:add_view(view) end
+
+    if locked then
+
+        self.b.locked = locked
+        core.set_active_view(last_active)
+    end
+
+    if dir == "up" or dir == "left" then
+
+        self.a, self.b = self.b, self.a
+    end
+
+    return child
 end
 
 
@@ -143,8 +153,8 @@ end
 
 
 function Node:add_view(view)
-  assert(self.type == "leaf", "Tried to add view to non-leaf node")
-  assert(not self.locked, "Tried to add view to locked node")
+  assert(self.type == "leaf", "tried to add view to non-leaf node")
+  assert(not self.locked, "tried to add view to locked node")
   if self.views[1] and self.views[1]:is(EmptyView) then
     table.remove(self.views)
   end
@@ -154,7 +164,7 @@ end
 
 
 function Node:set_active_view(view)
-  assert(self.type == "leaf", "Tried to set active view on non-leaf node")
+  assert(self.type == "leaf", "tried to set active view on non-leaf node")
   self.active_view = view
   core.set_active_view(view)
 end

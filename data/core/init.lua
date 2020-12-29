@@ -240,10 +240,10 @@ function core.load_project_module()
 
             local fn, err = loadfile(filename)
 
-            if not fn then error("Error when loading project module:\n\t" .. err) end
+            if not fn then error("error when loading project module:\n\t" .. err) end
 
             fn()
-            core.log_quiet("Loaded project module")
+            core.log_quiet("loaded project module")
         end)
     end
 
@@ -266,7 +266,7 @@ end
 
 function core.set_active_view(view)
 
-    assert(view, "Tried to set active view to nil")
+    assert(view, "tried to set active view to nil")
 
     if view ~= core.active_view then
 
@@ -286,12 +286,12 @@ end
 function core.push_clip_rect(x, y, w, h)
 
     local x2, y2, w2, h2 = table.unpack(core.clip_rect_stack[#core.clip_rect_stack])
-    local r, b, r2, b2 = x+w, y+h, x2+w2, y2+h2
+    local r, b, r2, b2 = x + w, y + h, x2 + w2, y2 + h2
 
     x, y = math.max(x, x2), math.max(y, y2)
     b, r = math.min(b, b2), math.min(r, r2)
 
-    w, h = r-x, b-y
+    w, h = r - x, b - y
     table.insert(core.clip_rect_stack, { x, y, w, h })
 
     renderer.set_clip_rect(x, y, w, h)
@@ -326,7 +326,7 @@ function core.open_doc(filename)
     local doc = Doc(filename)
 
     table.insert(core.docs, doc)
-    core.log_quiet(filename and "Opened doc \"%s\"" or "Opened new doc", filename)
+    core.log_quiet(filename and "opened doc \"%s\"" or "opened new doc", filename)
 
     return doc
 end
@@ -507,7 +507,7 @@ function core.step()
         if #core.get_views_referencing_doc(doc) == 0 then
 
             table.remove(core.docs, i)
-            core.log_quiet("Closed doc \"%s\"", doc:get_name())
+            core.log_quiet("closed doc \"%s\"", doc:get_name())
         end
     end
 
@@ -599,7 +599,7 @@ function core.on_error(err)
     -- write error to file
     local fp = io.open(EXEDIR .. "/error.txt", "wb")
 
-    fp:write("Error: " .. tostring(err) .. "\n")
+    fp:write("ERROR: " .. tostring(err) .. "\n")
     fp:write(debug.traceback(nil, 4))
     fp:close()
 

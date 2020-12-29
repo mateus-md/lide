@@ -84,7 +84,6 @@ function tokenizer.tokenize(syntax, text, state)
             local s, e, k = text:find('^(' .. p .. ')%s', i)
 
             if s then
-
                 -- matched pattern; make and add token
                 local t = text:sub(s, e)
                 push_token(res, syntax.symbols[k], t)
