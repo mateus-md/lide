@@ -1,9 +1,12 @@
 ### 1.2.0c - 30/12/20 patch
 \* Moved all graphical and update callbacks to `callback`<br/>
 \* Changed all plugins to use `callback`'s methods<br/>
+----
+\- Fixed input callbacks in `autocomp.lua` and `autoin.lua`<br/>
+\- Fixed `ifautoinsert.lua` bug for commentless languages<br/>
 
 ### 1.2.0c - 29/12/20 patch
-\* Fixed autocomplete (autocomp.lua) bug (renaming file makes it not work)<br/>
+\- Fixed autocomplete (autocomp.lua) bug (renaming file makes it not work)<br/>
     * the bug was happening because it wasn't using the draw\_api so <br/>
       probably one was overwriting the other's root\_draw function.<br/>
 \* Fixed indent behaviour<br/>
