@@ -8,23 +8,36 @@ callback.step  = {}
 callback.draw  = {}
 
 local _doc_save            = {}
-local dcvw_step            = {}
-local text_inpt, root_step = {}, {}
+local dcvw_step, root_step = {}, {}
+local dcvw_inpt, root_inpt = {}, {}
 local draw_dcvw, draw_line = {}, {}
 local draw_root            = {}
 
+local standby, sndby_n
 local function call_fun(fun, def, ran, ...)
 
     if ran[def.wait] or def.wait == '' then
 
-        def.func(...)
+        local out = def.func(...)
         ran[fun] = true
+
+        return out
     else
 
-        call_fun(fun, dwlt[def.wait], ran, ...)
+        sndby_n = def.wait
+        standby = {func = def.func, name = fun}
+    end
 
-        def.func(...)
-        ran[fun] = true
+    if ran[sndby_n] or sndby_n == fun then
+
+        local out = standby.func(...)
+        ran[standby.name] = true
+
+        standby = nil
+        sndby_n = nil
+        collectgarbage('collect')
+
+        return out
     end
 end
 
@@ -76,8 +89,40 @@ function docview:update(...)
     end
 end
 
+callback.__doc_input = docview.on_text_input
+function docview:on_text_input(...)
+
+    local rout
+    local ccnt = 0
+
+    local fran = {}
+    local _tbl = {}
+
+    for name, def in pairs(dcvw_inpt) do
+
+        if def.doabove then
+
+            rout = call_fun(name, def, fran, self, ...)
+            ccnt = ccnt + 1
+
+        else _tbl[name] = def end
+    end
+
+    -- Avoid multiple calls --
+    if rout then callback.__doc_input(self, rout) end
+
+    if ccnt == 0 then callback.__doc_input(self, ...)
+    else
+
+        for name, def in pairs(_tbl) do
+
+            call_fun(name, def, fran, self, ...)
+        end
+    end
+end
+
 local rootvw_update  = rootview.update
-function rootview.update(...)
+function rootview:update(...)
 
     local fran = {}
     local _tbl = {}
@@ -86,39 +131,45 @@ function rootview.update(...)
 
         if def.doabove then
 
-            call_fun(name, def, fran, ...)
+            call_fun(name, def, fran, self, ...)
 
         else _tbl[name] = def end
     end
 
-    rootvw_update(...)
+    rootvw_update(self, ...)
 
     for name, def in pairs(_tbl) do
 
-        call_fun(name, def, fran, ...)
+        call_fun(name, def, fran, self, ...)
     end
 end
 
-local on_text_input  = rootview.on_text_input
-function rootview.on_text_input(...)
+local root_input = rootview.on_text_input
+function rootview:on_text_input(...)
 
+    local rout
     local fran = {}
     local _tbl = {}
 
-    for name, def in pairs(text_inpt) do
+    for name, def in pairs(root_inpt) do
 
         if def.doabove then
 
-            call_fun(name, def, fran, ...)
+            rout = call_fun(name, def, fran, self, ...)
 
         else _tbl[name] = def end
     end
 
-    on_text_input(...)
+    -- Avoid multiple calls --
+    if rout then root_input(self, rout) end
 
-    for name, def in pairs(_tbl) do
+    if #root_inpt == 0 then root_input(self, ...)
+    else
 
-        call_fun(name, def, fran, ...)
+        for name, def in pairs(_tbl) do
+
+            call_fun(name, def, fran, self, ...)
+        end
     end
 end
 
@@ -207,6 +258,16 @@ function callback.step.docv(name, def)
     dcvw_step[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
+function callback.step.docv_input(name, def)
+
+    assert(def.perform and type(def.perform) == 'function')
+
+    local fn = def.perform
+    local wf = def.waitfor or ''
+
+    dcvw_inpt[name] = {func = fn, wait = wf, doabove = def.doabove}
+end
+
 function callback.step.root(name, def)
 
     assert(def.perform and type(def.perform) == 'function')
@@ -217,14 +278,14 @@ function callback.step.root(name, def)
     root_step[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-function callback.step.text_input(name, def)
+function callback.step.root_input(name, def)
 
     assert(def.perform and type(def.perform) == 'function')
 
     local fn = def.perform
     local wf = def.waitfor or ''
 
-    text_inpt[name] = {func = fn, wait = wf, doabove = def.doabove}
+    root_inpt[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
 function callback.draw.docv(name, def)

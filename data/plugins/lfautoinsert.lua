@@ -37,6 +37,9 @@ command.add("core.docview", {
         local line, col = doc:get_selection()
         local text = doc.lines[line - 1]
 
+        -- Strange bug
+        if not text then return end
+
         -- Ignore non-code lines --
         local cmmnt = doc.syntax.comment
         local index = text:find(cmmnt, 1, true)

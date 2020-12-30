@@ -1,18 +1,18 @@
 local core = require "core"
 local translate = require "core.doc.translate"
 local config = require "core.config"
-local DocView = require "core.docview"
+local docview = require "core.docview"
 local command = require "core.command"
 local keymap = require "core.keymap"
 local callback = require "core.callback"
 
 config.autoinsert_map = {
-  ["["] = "]",
-  ["{"] = "}",
-  ["("] = ")",
-  ['"'] = '"',
-  ["'"] = "'",
-  ["`"] = "`",
+    ["["] = "]",
+    ["{"] = "}",
+    ["("] = ")",
+    ['"'] = '"',
+    ["'"] = "'",
+    ["`"] = "`",
 }
 
 local function is_closer(chr)
@@ -37,27 +37,36 @@ local function count_char(text, chr)
     return count
 end
 
-callback.step.text_input('autoin', {
+callback.step.docv_input('autoin', {
 
+    doabove = true,
     perform = function(self, text)
 
         local mapping = config.autoinsert_map[text]
 
         -- prevents plugin from operating on `CommandView`
-        if getmetatable(self) ~= DocView then return end
+        if getmetatable(self) ~= docview then
+
+            return text
+        end
 
         -- wrap selection if we have a selection
         if mapping and self.doc:has_selection() then
+
             local l1, c1, l2, c2, swap = self.doc:get_selection(true)
+
+            core.log(string.format('%s %s', mapping, text))
             self.doc:insert(l2, c2, mapping)
             self.doc:insert(l1, c1, text)
             self.doc:set_selection(l1, c1, l2, c2 + 2, swap)
+
             return
         end
 
         -- skip inserting closing text
         local chr = self.doc:get_char(self.doc:get_selection())
         if text == chr and is_closer(chr) then
+
             self.doc:move_to(1)
             return
         end
@@ -65,21 +74,26 @@ callback.step.text_input('autoin', {
         -- don't insert closing quote if we have a non-even number on this line
         local line = self.doc:get_selection()
         if text == mapping and count_char(self.doc.lines[line], text) % 2 == 1 then
-            return
+
+            return text
         end
 
         -- auto insert closing bracket
-        if mapping and (chr:find("%s") or is_closer(chr) and chr ~= '"') then
-            on_text_input(self, text)
-            on_text_input(self, mapping)
+        if mapping and (chr:find('%s') or is_closer(chr) and chr ~= '"') then
+
+            callback.__doc_input(self, text)
+            callback.__doc_input(self, mapping)
+
             self.doc:move_to(-1)
             return
         end
+
+        return text
     end
 })
 
 local function predicate()
-    return getmetatable(core.active_view) == DocView
+    return getmetatable(core.active_view) == docview
         and not core.active_view.doc:has_selection()
 end
 

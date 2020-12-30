@@ -263,7 +263,7 @@ local function draw_suggestions_box(av)
     end
 end
 
-callback.step.text_input('autocomp', {
+callback.step.root_input('autocomp', {
 
     perform = function()
 
