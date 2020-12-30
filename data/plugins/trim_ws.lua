@@ -1,6 +1,6 @@
-local core = require "core"
-local command = require "core.command"
-local Doc = require "core.doc"
+local core     = require "core"
+local command  = require "core.command"
+local callback = require "core.callback"
 
 
 local function trim_trailing_whitespace(doc)
@@ -21,16 +21,14 @@ local function trim_trailing_whitespace(doc)
   end
 end
 
-
 command.add("core.docview", {
   ["trim-whitespace:trim-trailing-whitespace"] = function()
     trim_trailing_whitespace(core.active_view.doc)
   end,
 })
 
+callback.save('trim_whitespace', {
 
-local save = Doc.save
-Doc.save = function(self, ...)
-  trim_trailing_whitespace(self)
-  save(self, ...)
-end
+    doabove = true,
+    perform = trim_trailing_whitespace
+})

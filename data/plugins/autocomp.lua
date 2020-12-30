@@ -3,14 +3,14 @@
 -- and edited by mateus.mds           --
 
 local core      = require('core')
-local common    = require('core.common')
-local config    = require('core.config')
-local command   = require('core.command')
-local style     = require('core.style')
-local keymap    = require('core.keymap')
+local common    = require('core.common'  )
+local config    = require('core.config'  )
+local command   = require('core.command' )
+local style     = require('core.style'   )
+local keymap    = require('core.keymap'  )
+local docview   = require('core.docview' )
+local callback  = require('core.callback')
 local translate = require('core.doc.translate')
-local rootview  = require('core.rootview')
-local docview   = require('core.docview')
 
 config.autocomp_max_suggestions = 8
 
@@ -263,57 +263,53 @@ local function draw_suggestions_box(av)
     end
 end
 
--- patch event logic into RootView
-local on_text_input = rootview.on_text_input
-local update = rootview.update
+callback.step.text_input('autocomp', {
 
-local drawapi = require('core.draw_api')
+    perform = function()
 
-rootview.on_text_input = function(...)
+        local av = get_active_view()
+        if av then
 
-    on_text_input(...)
+            -- update partial symbol and suggestions
+            partial = get_partial_symbol()
+            if #partial >= 3 then
 
-    local av = get_active_view()
-    if av then
+                update_suggestions()
+                last_line, last_col = av.doc:get_selection()
+            else
 
-        -- update partial symbol and suggestions
-        partial = get_partial_symbol()
-        if #partial >= 3 then
+                reset_suggestions()
+            end
 
-            update_suggestions()
-            last_line, last_col = av.doc:get_selection()
-        else
+            -- scroll if rect is out of bounds of view
+            local _, y, _, h = get_suggestions_rect(av)
+            local limit = av.position.y + av.size.y
 
+            if y + h > limit then
+
+                av.scroll.to.y = av.scroll.y + y + h - limit
+            end
+        end
+    end
+})
+
+callback.step.root('autocomp', {
+
+    perform = function()
+
+        local av = get_active_view()
+        if av then
+
+            -- reset suggestions if caret was moved
+            local line, col = av.doc:get_selection()
+            if line ~= last_line or col ~= last_col then
             reset_suggestions()
-        end
-
-        -- scroll if rect is out of bounds of view
-        local _, y, _, h = get_suggestions_rect(av)
-        local limit = av.position.y + av.size.y
-
-        if y + h > limit then
-
-            av.scroll.to.y = av.scroll.y + y + h - limit
+            end
         end
     end
-end
+})
 
-rootview.update = function(...)
-
-    update(...)
-
-    local av = get_active_view()
-    if av then
-
-        -- reset suggestions if caret was moved
-        local line, col = av.doc:get_selection()
-        if line ~= last_line or col ~= last_col then
-        reset_suggestions()
-        end
-    end
-end
-
-drawapi.root_view('autocomp', {
+callback.draw.root('autocomp', {
 
     perform = function()
 

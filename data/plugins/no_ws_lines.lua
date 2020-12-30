@@ -1,9 +1,9 @@
 local core     = require('core')
 local style    = require('core.style')
 local config   = require('core.config')
-local draw_api = require('core.draw_api')
+local callback = require('core.callback')
 
-draw_api.draw_line('no-whitespaces', {
+callback.draw.line('no-whitespaces', {
 
     perform = function(self, idx, x, y)
 

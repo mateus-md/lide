@@ -1,11 +1,11 @@
-local style   = require('core.style')
-local docview = require('core.docview')
-local drawapi = require('core.draw_api')
+local style    = require('core.style')
+local docview  = require('core.docview')
+local callback = require('core.callback')
 
 -- originally written by luveti
 -- modified by mateus.md
 
-drawapi.line_body('select_hgtlgt', {
+callback.draw.line('select_hgtlgt', {
 
     doabove = true,
     perform = function(self, idx, x, y)

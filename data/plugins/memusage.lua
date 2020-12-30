@@ -9,7 +9,7 @@ local core = require "core"
 local command = require "core.command"
 local style = require "core.style"
 local config = require "core.config"
-local drawapi = require "core.draw_api"
+local callback = require "core.callback"
 
 -- Configurations --
 -- Defaults
@@ -21,7 +21,7 @@ function config.memusage_coords()
 end
 
 -- Logic --
-drawapi.root_view('draw_memusage', {
+callback.draw.root('draw_memusage', {
 
     perform = function()
 

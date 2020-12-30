@@ -3,23 +3,30 @@ local config = require "core.config"
 local style = require "core.style"
 local StatusView = require "core.statusview"
 
-
 local git = {
-  branch = nil,
-  inserts = 0,
-  deletes = 0,
+    branch = nil,
+    inserts = 0,
+    deletes = 0,
 }
 
-
 local function exec(cmd, wait)
-  local tempfile = core.temp_filename()
-  system.exec(string.format("%s > %q", cmd, tempfile))
-  coroutine.yield(wait)
-  local fp = io.open(tempfile)
-  local res = fp:read("*a")
-  fp:close()
-  os.remove(tempfile)
-  return res
+
+    local tempfile = core.temp_filename()
+    system.exec(string.format('%s > %q', cmd, tempfile))
+
+    coroutine.yield(wait)
+
+    local fp = io.open(tempfile)
+    if fp then
+
+        local res = fp:read('*a')
+        fp:close()
+
+        os.remove(tempfile)
+        return res
+    end
+
+    return ''
 end
 
 
