@@ -57,7 +57,7 @@ command.add("core.docview", {
             end
 
             local c = safec:find(cmmnt, 1, true)
-            if c and c >= col then return end
+            if c and col >= c then return end
         end
 
         for ptn, close in pairs(config.lfautoinsert_map) do

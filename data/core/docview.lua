@@ -18,7 +18,6 @@ local function move_to_line_offset(dv, line, col, offset)
   return xo.line, xo.col
 end
 
-
 docview.translate = {
   ["previous_page"] = function(doc, line, col, dv)
     local min, max = dv:get_visible_line_range()

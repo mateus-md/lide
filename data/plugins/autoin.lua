@@ -42,6 +42,35 @@ callback.step.docv_input('autoin', {
     doabove = true,
     perform = function(self, text)
 
+        do
+            -- Ignore non-code lines --
+            local _adoc = core.active_view.doc
+            local cmmnt = _adoc.syntax.comment
+
+            local line, col = _adoc:get_selection()
+            local cntt = _adoc:get_text(line, 1, line, col)
+
+            -- Skip it if file doesn't have an comment --
+            local index
+            if cmmnt then index = cntt:find(cmmnt, 1, true) end
+
+            -- Do this only it has an potential comment
+            if index then
+
+                local safec = cntt
+                local strng = safec:match('.-(".-").-')
+                -- Remove all strings to avoid missmatches --
+                while strng do
+
+                    safec = safec:gsub(strng, string.rep(" ", #strng))
+                    strng = safec:match('.-(".-").-')
+                end
+
+                local c = safec:find(cmmnt, 1, true)
+                if c and col >= c then return text end
+            end
+        end
+
         local mapping = config.autoinsert_map[text]
 
         -- prevents plugin from operating on `CommandView`
