@@ -308,6 +308,7 @@ end
 
 
 function docview:draw_line_body(idx, x, y)
+
     local line, col = self.doc:get_selection()
 
     -- draw selection if it overlaps this line

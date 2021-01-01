@@ -267,6 +267,7 @@ callback.step.root_input('autocomp', {
 
     perform = function()
 
+        core.log('autocomp')
         local av = get_active_view()
         if av then
 
@@ -276,10 +277,8 @@ callback.step.root_input('autocomp', {
 
                 update_suggestions()
                 last_line, last_col = av.doc:get_selection()
-            else
 
-                reset_suggestions()
-            end
+            else reset_suggestions() end
 
             -- scroll if rect is out of bounds of view
             local _, y, _, h = get_suggestions_rect(av)

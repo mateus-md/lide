@@ -11,11 +11,11 @@ function view:draw_scrollbar()
 
     if is_hovered then
 
-        renderer.draw_rect(x + w - (w * 2.5), 0, w * 2.5, self.size.y + h * 1.5, style.divider)
+        renderer.draw_rect(x + w - (w * 2.5), 0, w * 2.5, self.size.y + h * 1.5, style.scrollbar3)
         renderer.draw_rect(x + w - (w * 2.5), y, w * 2.5, h, color)
     else
 
-        renderer.draw_rect(x + w - (w * 2), 0, w * 2, self.size.y + h * 1.5, style.divider)
+        renderer.draw_rect(x + w - (w * 2), 0, w * 2, self.size.y + h * 1.5, style.scrollbar3)
         renderer.draw_rect(x + w - (w * 2), y, w * 2, h, color)
     end
 end

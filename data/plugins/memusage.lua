@@ -11,10 +11,6 @@ local style = require "core.style"
 local config = require "core.config"
 local callback = require "core.callback"
 
--- Configurations --
--- Defaults
--- Table containing RGBA int color values for the text.
-config.memusage_color = style.line_number2
 -- Function taking no arguments that returns two ints for the text's x and y position.
 function config.memusage_coords()
   return core.root_view.size.x - 90, 4
@@ -28,7 +24,7 @@ callback.draw.root('draw_memusage', {
         if config.memusage_active then
             local str = string.format('%.2f MB', collectgarbage('count') / 1024)
             local x, y = config.memusage_coords()
-            renderer.draw_text(style.font, str, x + 30, y + 5, config.memusage_color)
+            renderer.draw_text(style.font, str, x + 30, y + 5, style.text)
         end
     end
 })

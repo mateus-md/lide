@@ -10,8 +10,8 @@ callback.draw  = {}
 local _doc_save            = {}
 local dcvw_step, root_step = {}, {}
 local dcvw_inpt, root_inpt = {}, {}
-local draw_dcvw, draw_line = {}, {}
-local draw_root            = {}
+local draw_body, draw_line = {}, {}
+local draw_dcvw, draw_root = {}, {}
 
 local standby, sndby_n
 local function call_fun(fun, def, ran, ...)
@@ -174,7 +174,7 @@ function rootview:on_text_input(...)
 end
 
 -- Graphics --
-local draw_docview   = docview.draw
+local draw_docview = docview.draw
 function docview:draw(...)
 
     local fran = {}
@@ -198,10 +198,31 @@ function docview:draw(...)
 end
 
 local draw_line_body = docview.draw_line_body
-local draw_line_text = docview.draw_line_text
 
-function docview:draw_line_text() end
 function docview:draw_line_body(...)
+
+    local fran = {}
+    local _tbl = {}
+
+    for name, def in pairs(draw_body) do
+
+        if def.doabove then
+
+            call_fun(name, def, fran, self, ...)
+
+        else _tbl[name] = def end
+    end
+
+    draw_line_body(self, ...)
+
+    for name, def in pairs(_tbl) do
+
+        call_fun(name, def, fran, self, ...)
+    end
+end
+
+local draw_line_text = docview.draw_line_text
+function docview:draw_line_text(...)
 
     local fran = {}
     local _tbl = {}
@@ -215,7 +236,6 @@ function docview:draw_line_body(...)
         else _tbl[name] = def end
     end
 
-    draw_line_body(self, ...)
     draw_line_text(self, ...)
 
     for name, def in pairs(_tbl) do
@@ -306,6 +326,16 @@ function callback.draw.line(name, def)
     local wf = def.waitfor or ''
 
     draw_line[name] = {func = fn, wait = wf, doabove = def.doabove}
+end
+
+function callback.draw.body(name, def)
+
+    assert(def.perform and type(def.perform) == 'function')
+
+    local fn = def.perform
+    local wf = def.waitfor or ''
+
+    draw_body[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
 function callback.draw.root(name, def)

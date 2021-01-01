@@ -2,18 +2,18 @@ local core = require "core"
 local common = require "core.common"
 local style = require "core.style"
 local keymap = require "core.keymap"
-local Object = require "core.object"
-local View = require "core.view"
-local DocView = require "core.docview"
+local object = require "core.object"
+local view = require "core.view"
+local docview = require "core.docview"
 
-local EmptyView = View:extend()
+local emptyview = view:extend()
 
 local function draw_text(x, y, color)
 
     local th = style.big_font:get_height()
     local dh = th + style.padding.y * 2
 
-    x = renderer.draw_text(style.big_font, "lite", x, y + (dh - th) / 2, color)
+    x = renderer.draw_text(style.big_font, 'lide', x, y + (dh - th) / 2, color)
     x = x + style.padding.x
     renderer.draw_rect(x, y, math.ceil(1 * SCALE), dh, color)
 
@@ -36,7 +36,7 @@ local function draw_text(x, y, color)
     return w, dh
 end
 
-function EmptyView:draw()
+function emptyview:draw()
     self:draw_background(style.background)
     local w, h = draw_text(0, 0, { 0, 0, 0, 0 })
     local x = self.position.x + math.max(style.padding.x, (self.size.x - w) / 2)
@@ -46,7 +46,7 @@ end
 
 
 
-local Node = Object:extend()
+local Node = object:extend()
 
 function Node:new(type)
   self.type = type or "leaf"
@@ -55,7 +55,7 @@ function Node:new(type)
   self.views = {}
   self.divider = 0.5
   if self.type == "leaf" then
-    self:add_view(EmptyView())
+    self:add_view(emptyview())
   end
 end
 
@@ -95,9 +95,9 @@ local type_map = {up = "vsplit", down = "vsplit", left = "hsplit", right = "hspl
 
 function Node:split(dir, view, locked)
 
-    assert(self.type == "leaf", "Tried to split non-leaf node")
+    assert(self.type == "leaf", "tried to split non-leaf node")
 
-    local type = assert(type_map[dir], "Invalid direction")
+    local type = assert(type_map[dir], "invalid direction")
     local last_active = core.active_view
     local child = Node()
 
@@ -136,7 +136,7 @@ function Node:close_active_view(root)
       local other = parent[is_a and "b" or "a"]
       if other:get_locked_size() then
         self.views = {}
-        self:add_view(EmptyView())
+        self:add_view(emptyview())
       else
         parent:consume(other)
         local p = parent
@@ -155,7 +155,7 @@ end
 function Node:add_view(view)
   assert(self.type == "leaf", "tried to add view to non-leaf node")
   assert(not self.locked, "tried to add view to locked node")
-  if self.views[1] and self.views[1]:is(EmptyView) then
+  if self.views[1] and self.views[1]:is(emptyview) then
     table.remove(self.views)
   end
   table.insert(self.views, view)
@@ -393,27 +393,27 @@ end
 
 
 
-local RootView = View:extend()
+local Rootview = view:extend()
 
-function RootView:new()
-  RootView.super.new(self)
+function Rootview:new()
+  Rootview.super.new(self)
   self.root_node = Node()
   self.deferred_draws = {}
   self.mouse = { x = 0, y = 0 }
 end
 
 
-function RootView:defer_draw(fn, ...)
+function Rootview:defer_draw(fn, ...)
   table.insert(self.deferred_draws, 1, { fn = fn, ... })
 end
 
 
-function RootView:get_active_node()
+function Rootview:get_active_node()
   return self.root_node:get_node_for_view(core.active_view)
 end
 
 
-function RootView:open_doc(doc)
+function Rootview:open_doc(doc)
   local node = self:get_active_node()
   if node.locked and core.last_active_view then
     core.set_active_view(core.last_active_view)
@@ -426,7 +426,7 @@ function RootView:open_doc(doc)
       return view
     end
   end
-  local view = DocView(doc)
+  local view = docview(doc)
   node:add_view(view)
   self.root_node:update_layout()
   view:scroll_to_line(view.doc:get_selection(), true, true)
@@ -434,7 +434,7 @@ function RootView:open_doc(doc)
 end
 
 
-function RootView:on_mouse_pressed(button, x, y, clicks)
+function Rootview:on_mouse_pressed(button, x, y, clicks)
   local div = self.root_node:get_divider_overlapping_point(x, y)
   if div then
     self.dragged_divider = div
@@ -454,7 +454,7 @@ function RootView:on_mouse_pressed(button, x, y, clicks)
 end
 
 
-function RootView:on_mouse_released(...)
+function Rootview:on_mouse_released(...)
   if self.dragged_divider then
     self.dragged_divider = nil
   end
@@ -462,7 +462,7 @@ function RootView:on_mouse_released(...)
 end
 
 
-function RootView:on_mouse_moved(x, y, dx, dy)
+function Rootview:on_mouse_moved(x, y, dx, dy)
   if self.dragged_divider then
     local node = self.dragged_divider
     if node.type == "hsplit" then
@@ -489,26 +489,26 @@ function RootView:on_mouse_moved(x, y, dx, dy)
 end
 
 
-function RootView:on_mouse_wheel(...)
+function Rootview:on_mouse_wheel(...)
   local x, y = self.mouse.x, self.mouse.y
   local node = self.root_node:get_child_overlapping_point(x, y)
   node.active_view:on_mouse_wheel(...)
 end
 
 
-function RootView:on_text_input(...)
+function Rootview:on_text_input(...)
   core.active_view:on_text_input(...)
 end
 
 
-function RootView:update()
+function Rootview:update()
   copy_position_and_size(self.root_node, self)
   self.root_node:update()
   self.root_node:update_layout()
 end
 
 
-function RootView:draw()
+function Rootview:draw()
   self.root_node:draw()
   while #self.deferred_draws > 0 do
     local t = table.remove(self.deferred_draws)
@@ -517,4 +517,4 @@ function RootView:draw()
 end
 
 
-return RootView
+return Rootview

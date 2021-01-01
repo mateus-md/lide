@@ -3,7 +3,7 @@ local style    = require('core.style')
 local config   = require('core.config')
 local callback = require('core.callback')
 
-callback.draw.line('no-whitespaces', {
+callback.draw.body('no-whitespaces', {
 
     perform = function(self, idx, x, y)
 

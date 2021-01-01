@@ -27,7 +27,7 @@ local function get_line_indent_guide_spaces(doc, idx)
   return get_line_spaces(doc, idx)
 end
 
-callback.draw.line('scope_line', {
+callback.draw.body('scope_line', {
 
     doabove = true,
     perform = function(self, idx, x, y)

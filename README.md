@@ -1,38 +1,16 @@
-# lite
+# lide
 ![screenshot](https://user-images.githubusercontent.com/3920290/81471642-6c165880-91ea-11ea-8cd1-fae7ae8f0bc4.png)
 
-A lightweight text editor written in Lua
-
-* **[Get started](doc/usage.md)** — A quick overview on how to get started
-* **[Get plugins](https://github.com/mateusmds/lite-plugins)** — Add additional
-  functionality
-* **[Get color themes](https://github.com/rxi/lite-colors)** — Add additional colors
-  themes
+Lide is a lightweight text editor written in Lua. A fork from the [lite](https://github.com/rxi/lite) by rxi.
+Lite has (or will have) IDE features, like `goto definition`, `spy references` and other things like that.
 
 ## Overview
-lite is a lightweight text editor written mostly in Lua — it aims to provide
-something practical, pretty, *small* and fast, implemented as simply as
-possible; easy to modify and extend, or to use without doing either.
-
-## Customization
-Additional functionality can be added through plugins which are available from
-the [plugins repository](https://github.com/rxi/lite-plugins); additional color
-themes can be found in the [colors repository](https://github.com/rxi/lite-colors).
-The editor can be customized by making changes to the
-[user module](data/user/init.lua).
+This repository is just a personal project of how I use the editor and what changes I found necessary for **my** use.<br/>
+Consequently, most pull requests and issues I may miss because they are outside my main focus with it.
 
 ## Building
-You can build the project yourself on Linux using the `build.sh` script
-or on Windows using the `build.bat` script *([MinGW](https://nuwen.net/mingw.html) is required)*.
-Note that the project does not need to be rebuilt if you are only making changes
-to the Lua portion of the code.
-
-## Contributing
-Any additional functionality that can be added through a plugin should be done
-so as a plugin, after which a pull request to the
-[plugins repository](https://github.com/rxi/lite-plugins) can be made. In hopes
-of remaining lightweight, pull requests adding additional functionality to the
-core will likely not be merged. Bug reports and bug fixes are welcome.
+This program only supports Linux building because I'm a Linux user, but if you are really interested<br/>
+in using it you can coppy the windows libs from the parent repository and then build it using the .bat file found there too.
 
 ## License
 This project is free software; you can redistribute it and/or modify it under
