@@ -1,3 +1,9 @@
+### 1.0.0d - lide
+\* Fixed color prev<br/>
+\* A lot of fixes<br/>
+\* Division of callback.draw.line in line and body<br/>
+\- Github theme
+
 ### 1.2.0c - 30/12/20 patch
 \* Moved all graphical and update callbacks to `callback`<br/>
 \* Changed all plugins to use `callback`'s methods<br/>
