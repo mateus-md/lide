@@ -37,7 +37,7 @@ local function count_char(text, chr)
     return count
 end
 
-callback.step.docv_input('autoin', {
+callback.input('autoin', {
 
     doabove = true,
     perform = function(self, text)
@@ -84,6 +84,7 @@ callback.step.docv_input('autoin', {
 
             local l1, c1, l2, c2, swap = self.doc:get_selection(true)
 
+            core.log(string.format('%s %s', mapping, text))
             self.doc:insert(l2, c2, mapping)
             self.doc:insert(l1, c1, text)
             self.doc:set_selection(l1, c1, l2, c2 + 2, swap)

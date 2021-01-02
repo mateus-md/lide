@@ -68,7 +68,7 @@ local function draw_color_previews(self, idx, x, y, ptn, base, nibbles)
     end
 end
 
-callback.draw.line('colorprev', {
+callback.docv.line('colorprev', {
 
     perform = function(self, idx, x, y)
 

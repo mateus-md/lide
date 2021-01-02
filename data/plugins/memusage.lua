@@ -17,14 +17,14 @@ function config.memusage_coords()
 end
 
 -- Logic --
-callback.draw.root('draw_memusage', {
+callback.root.draw('draw_memusage', {
 
     perform = function()
 
         if config.memusage_active then
             local str = string.format('%.2f MB', collectgarbage('count') / 1024)
             local x, y = config.memusage_coords()
-            renderer.draw_text(style.font, str, x + 30, y + 5, style.text)
+            renderer.draw_text(style.font, str, x + 24, y + 5, style.text)
         end
     end
 })

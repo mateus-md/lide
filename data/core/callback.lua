@@ -4,10 +4,10 @@ local rootview = require('core.rootview')
 local docview  = require('core.docview')
 
 local callback = {}
-callback.step  = {}
-callback.draw  = {}
+callback.root  = {}
+callback.docv  = {}
 
-local _doc_save            = {}
+local _doc_save, doc_input = {}, {}
 local dcvw_step, root_step = {}, {}
 local dcvw_inpt, root_inpt = {}, {}
 local draw_body, draw_line = {}, {}
@@ -98,7 +98,7 @@ function docview:on_text_input(...)
     local fran = {}
     local _tbl = {}
 
-    for name, def in pairs(dcvw_inpt) do
+    for name, def in pairs(doc_input) do
 
         if def.doabove then
 
@@ -144,37 +144,8 @@ function rootview:update(...)
     end
 end
 
-local root_input = rootview.on_text_input
-function rootview:on_text_input(...)
-
-    local rout
-    local fran = {}
-    local _tbl = {}
-
-    for name, def in pairs(root_inpt) do
-
-        if def.doabove then
-
-            rout = call_fun(name, def, fran, self, ...)
-
-        else _tbl[name] = def end
-    end
-
-    -- Avoid multiple calls --
-    if rout then root_input(self, rout) end
-
-    if #root_inpt == 0 then root_input(self, ...)
-    else
-
-        for name, def in pairs(_tbl) do
-
-            call_fun(name, def, fran, self, ...)
-        end
-    end
-end
-
 -- Graphics --
-local draw_docview = docview.draw
+local draw_docview   = docview.draw
 function docview:draw(...)
 
     local fran = {}
@@ -198,7 +169,6 @@ function docview:draw(...)
 end
 
 local draw_line_body = docview.draw_line_body
-
 function docview:draw_line_body(...)
 
     local fran = {}
@@ -222,7 +192,7 @@ function docview:draw_line_body(...)
 end
 
 local draw_line_text = docview.draw_line_text
-function docview:draw_line_text(...)
+function docview:draw_line_line(...)
 
     local fran = {}
     local _tbl = {}
@@ -268,9 +238,9 @@ function rootview.draw(...)
 end
 
 -- Callbacks --
-function callback.step.docv(name, def)
+function callback.docv.step(name, def)
 
-    assert(def.perform and type(def.perform) == 'function')
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
     local wf = def.waitfor or ''
@@ -278,19 +248,19 @@ function callback.step.docv(name, def)
     dcvw_step[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-function callback.step.docv_input(name, def)
+function callback.input(name, def)
 
-    assert(def.perform and type(def.perform) == 'function')
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
     local wf = def.waitfor or ''
 
-    dcvw_inpt[name] = {func = fn, wait = wf, doabove = def.doabove}
+    doc_input[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-function callback.step.root(name, def)
+function callback.root.step(name, def)
 
-    assert(def.perform and type(def.perform) == 'function')
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
     local wf = def.waitfor or ''
@@ -298,19 +268,9 @@ function callback.step.root(name, def)
     root_step[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-function callback.step.root_input(name, def)
+function callback.docv.draw(name, def)
 
-    assert(def.perform and type(def.perform) == 'function')
-
-    local fn = def.perform
-    local wf = def.waitfor or ''
-
-    root_inpt[name] = {func = fn, wait = wf, doabove = def.doabove}
-end
-
-function callback.draw.docv(name, def)
-
-    assert(def.perform and type(def.perform) == 'function')
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
     local wf = def.waitfor or ''
@@ -318,19 +278,9 @@ function callback.draw.docv(name, def)
     draw_dcvw[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-function callback.draw.line(name, def)
+function callback.docv.body(name, def)
 
-    assert(def.perform and type(def.perform) == 'function')
-
-    local fn = def.perform
-    local wf = def.waitfor or ''
-
-    draw_line[name] = {func = fn, wait = wf, doabove = def.doabove}
-end
-
-function callback.draw.body(name, def)
-
-    assert(def.perform and type(def.perform) == 'function')
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
     local wf = def.waitfor or ''
@@ -338,9 +288,19 @@ function callback.draw.body(name, def)
     draw_body[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-function callback.draw.root(name, def)
+function callback.docv.line(name, def)
 
-    assert(def.perform and type(def.perform) == 'function')
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
+
+    local fn = def.perform
+    local wf = def.waitfor or ''
+
+    draw_line[name] = {func = fn, wait = wf, doabove = def.doabove}
+end
+
+function callback.root.draw(name, def)
+
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
     local wf = def.waitfor or ''
@@ -350,7 +310,7 @@ end
 
 function callback.save(name, def)
 
-    assert(def.perform and type(def.perform) == 'function')
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
     local wf = def.waitfor or ''

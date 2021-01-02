@@ -20,6 +20,7 @@ style.highlight_select = {common.color "#454244"}
 
 style.scrollbar  = {common.color "#454344"}
 style.scrollbar2 = {common.color "#524F50"}
+style.scrollbar3 = {common.color "#242223"}
 
 style.syntax["normal"]   = {common.color "#efdab9"}
 style.syntax["symbol"]   = {common.color "#efdab9"}

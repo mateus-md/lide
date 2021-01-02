@@ -94,12 +94,12 @@ local function update_state(line_limit)
     }
 end
 
-callback.step.docv('brackertmatch', {
+callback.docv.step('brackertmatch', {
 
     perform = function() update_state(100) end
 })
 
-callback.draw.line('brackertmatch', {
+callback.docv.line('brackertmatch', {
 
     perform = function(self, idx, x, y)
 

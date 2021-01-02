@@ -5,7 +5,7 @@ local callback = require('core.callback')
 -- originally written by luveti
 -- modified by mateus.md
 
-callback.draw.line('select_hgtlgt', {
+callback.docv.line('select_hgtlgt', {
 
     doabove = true,
     perform = function(self, idx, x, y)

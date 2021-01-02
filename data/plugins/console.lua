@@ -472,7 +472,7 @@ command.add(nil, {
                 if #p_path > 20 then p_path = p_path:match('.+([/\\][^/\\]+[/\\][^/\\]+)$') end
                 if #p_path > 20 then p_path = p_path:match('.+([/\\][^/\\]+)$') end
 
-                local prefix = 'lide ~ ' .. p_path .. ' $'
+                local prefix = 'lite ~ ' .. p_path .. ' $'
 
                 core.command_view:set_text(last_command, true)
                 core.command_view:enter(prefix,

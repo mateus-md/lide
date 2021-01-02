@@ -21,7 +21,7 @@ end
 
 local last_x, last_y, last_view
 
-callback.draw.docv('motiontrail', {
+callback.docv.draw('motiontrail', {
 
     perform = function(self)
 
@@ -37,7 +37,7 @@ callback.draw.docv('motiontrail', {
                 local iy = lerp(y, last_y, i)
                 local iw = math.max(w, math.ceil(math.abs(ix - lx)))
 
-                renderer.draw_rect(ix, iy, iw, h, style.trail or style.acent)
+                renderer.draw_rect(ix, iy, iw, h, style.caret)
                 lx = ix
             end
 

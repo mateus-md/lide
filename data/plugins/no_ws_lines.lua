@@ -3,7 +3,7 @@ local style    = require('core.style')
 local config   = require('core.config')
 local callback = require('core.callback')
 
-callback.draw.body('no-whitespaces', {
+callback.docv.body('no-whitespaces', {
 
     perform = function(self, idx, x, y)
 
@@ -21,7 +21,7 @@ callback.draw.body('no-whitespaces', {
 
             for c = 1, t do
 
-                local color = style.guide or style.selection
+                local color = style.selection
                 renderer.draw_text(font, '.', tx, ty, color)
                 tx = tx + font:get_width(' ')
             end
