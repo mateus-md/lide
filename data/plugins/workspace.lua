@@ -1,20 +1,27 @@
 local core = require "core"
 local DocView = require "core.docview"
 
-local workspace_filename = ".lite_workspace.lua"
+local workspace_filename = ".lide_workspace.lua"
 
 
 local function serialize(val)
-  if type(val) == "string" then
-    return string.format("%q", val)
-  elseif type(val) == "table" then
-    local t = {}
-    for k, v in pairs(val) do
-      table.insert(t, "[" .. serialize(k) .. "]=" .. serialize(v))
+
+    if type(val) == "string" then
+
+        return string.format("%q", val)
+
+    elseif type(val) == "table" then
+
+        local t = {}
+        for k, v in pairs(val) do
+
+            table.insert(t, "[" .. serialize(k) .. "]=" .. serialize(v))
+        end
+
+        return "{" .. table.concat(t, ",") .. "}"
     end
-    return "{" .. table.concat(t, ",") .. "}"
-  end
-  return tostring(val)
+
+    return tostring(val)
 end
 
 
@@ -146,9 +153,9 @@ local function load_workspace()
 end
 
 
-local run = core.run
+local run = core.init
 
-function core.run(...)
+function core.init(...)
   if #core.docs == 0 then
     core.try(load_workspace)
 
