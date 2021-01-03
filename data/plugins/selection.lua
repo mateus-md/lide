@@ -5,7 +5,7 @@ local callback = require('core.callback')
 -- originally written by luveti
 -- modified by mateus.md
 
-callback.docv.line('select_hgtlgt', {
+callback.docv.body('select_hgtlgt', {
 
     doabove = true,
     perform = function(self, idx, x, y)
@@ -13,8 +13,10 @@ callback.docv.line('select_hgtlgt', {
         local line1, col1, line2, col2 = self.doc:get_selection(true)
         if line1 == line2 and col1 ~= col2 then
 
-            local lh = self:get_line_height()
             local selected_text = self.doc.lines[line1]:sub(col1, col2 - 1)
+            -- Skip whitespace selections --
+            if selected_text:match('^[ \t]+\n?$') then return end
+
             local current_line_text = self.doc.lines[idx]
             local last_col = 1
             while true do
@@ -25,12 +27,7 @@ callback.docv.line('select_hgtlgt', {
                 local x1 = x + self:get_col_x_offset(idx, start_col)
                 local x2 = x + self:get_col_x_offset(idx, end_col + 1)
 
-                -- Ignore whitespace selections --
-                if not selected_text:match('^[ \t]+\n?$') then
-
-                    renderer.draw_rect(x1, y, x2 - x1, lh, style.selection)
-                end
-
+                renderer.draw_rect(x1, y, x2 - x1, self:get_line_height(), style.selection)
                 last_col = end_col + 1
             end
         end

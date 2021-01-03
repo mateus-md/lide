@@ -1,3 +1,15 @@
+### 1.0.1d - 02/01/21 patch
+\* Fixed bracket\_match.lua and selection.lua<br/>
+\* Refixed lang\_lua.lua function definitions<br/>
+\* Fixed colorprev.lua<br/>
+
+### 1.0.1d - 02/01/21 patch
+\+ lua intelisense<br/>
+\+ Readded user/init.lua file<br/>
+\* Fixed autocomp.lua and autoin<br/>
+\* Scrollbar is now thicker<br/>
+\* Fixed workspace.lua<br/>
+
 ### 1.0.0d - lide
 \* Fixed color prev<br/>
 \* A lot of fixes<br/>

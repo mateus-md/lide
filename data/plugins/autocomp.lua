@@ -2,32 +2,30 @@
 -- Implemented franko's modifications --
 -- and edited by mateus.mds           --
 
-local core = require "core"
-local common = require "core.common"
-local config = require "core.config"
-local command = require "core.command"
-local style = require "core.style"
-local keymap = require "core.keymap"
-local translate = require "core.doc.translate"
-local RootView = require "core.rootview"
-local DocView = require "core.docview"
-local callback = require "core.callback"
+local core      = require('core')
+local common    = require('core.common')
+local config    = require('core.config')
+local command   = require('core.command')
+local style     = require('core.style')
+local keymap    = require('core.keymap')
+local docview   = require('core.docview')
+local translate = require('core.doc.translate')
+local callback  = require('core.callback')
 
-config.autocomplete_max_suggestions = 6
+config.autocomp_mxs = 8
 
-local autocomplete = {}
-autocomplete.map = {}
-
+local autocomp = {}
+autocomp.map = {}
 
 local mt = { __tostring = function(t) return t.text end }
 
-function autocomplete.add(t)
+function autocomp.add(t)
   local items = {}
   for text, info in pairs(t.items) do
     info = (type(info) == "string") and info
     table.insert(items, setmetatable({ text = text, info = info }, mt))
   end
-  autocomplete.map[t.name] =  { files = t.files or ".*", items = items }
+  autocomp.map[t.name] =  { files = t.files or ".*", items = items }
 end
 
 
@@ -72,7 +70,7 @@ core.add_thread(function()
     end
 
     -- update symbols list
-    autocomplete.add { name = "open-docs", items = symbols }
+    autocomp.add { name = "open-docs", items = symbols }
 
     -- wait for next scan
     local valid = true
@@ -107,7 +105,7 @@ local function update_suggestions()
 
   -- get all relevant suggestions for given filename
   local items = {}
-  for _, v in pairs(autocomplete.map) do
+  for _, v in pairs(autocomp.map) do
     if common.match_pattern(filename, v.files) then
       for _, item in pairs(v.items) do
         table.insert(items, item)
@@ -118,7 +116,7 @@ local function update_suggestions()
   -- fuzzy match, remove duplicates and store
   items = common.fuzzy_match(items, partial)
   local j = 1
-  for i = 1, config.autocomplete_max_suggestions do
+  for i = 1, config.autocomp_mxs do
     suggestions[i] = items[j]
     while items[j] and items[i].text == items[j].text do
       items[i].info = items[i].info or items[j].info
@@ -137,7 +135,7 @@ end
 
 
 local function get_active_view()
-  if getmetatable(core.active_view) == DocView then
+  if getmetatable(core.active_view) == docview then
     return core.active_view
   end
 end
@@ -197,7 +195,7 @@ end
 
 callback.input('autocomp:input', {
 
-    perform = function(...)
+    perform = function()
 
         local av = get_active_view()
         if av then
@@ -207,10 +205,8 @@ callback.input('autocomp:input', {
 
                 update_suggestions()
                 last_line, last_col = av.doc:get_selection()
-            else
 
-                reset_suggestions()
-            end
+            else reset_suggestions() end
             -- scroll if rect is out of bounds of view
             local _, y, _, h = get_suggestions_rect(av)
             local limit = av.position.y + av.size.y
@@ -225,7 +221,7 @@ callback.input('autocomp:input', {
 
 callback.root.step('autocomp:step', {
 
-    perform = function(...)
+    perform = function()
 
         local av = get_active_view()
 
@@ -258,7 +254,7 @@ end
 
 
 command.add(predicate, {
-  ["autocomplete:complete"] = function()
+  ["autocomp:complete"] = function()
     local doc = core.active_view.doc
     local line, col = doc:get_selection()
     local text = suggestions[suggestions_idx].text
@@ -268,26 +264,26 @@ command.add(predicate, {
     reset_suggestions()
   end,
 
-  ["autocomplete:previous"] = function()
+  ["autocomp:previous"] = function()
     suggestions_idx = math.max(suggestions_idx - 1, 1)
   end,
 
-  ["autocomplete:next"] = function()
+  ["autocomp:next"] = function()
     suggestions_idx = math.min(suggestions_idx + 1, #suggestions)
   end,
 
-  ["autocomplete:cancel"] = function()
+  ["autocomp:cancel"] = function()
     reset_suggestions()
   end,
 })
 
 
 keymap.add {
-  ["tab"]    = "autocomplete:complete",
-  ["up"]     = "autocomplete:previous",
-  ["down"]   = "autocomplete:next",
-  ["escape"] = "autocomplete:cancel",
+  ["tab"]    = "autocomp:complete",
+  ["up"]     = "autocomp:previous",
+  ["down"]   = "autocomp:next",
+  ["escape"] = "autocomp:cancel",
 }
 
 
-return autocomplete
+return autocomp

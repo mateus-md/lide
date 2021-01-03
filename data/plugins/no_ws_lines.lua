@@ -42,7 +42,7 @@ callback.docv.body('no-whitespaces', {
 
             for c = i, i - 1 + t do
 
-                local color = style.guide or style.selection
+                local color = style.guide or style.highlight_select
                 renderer.draw_text(font, '.', tx, ty, color)
                 tx = tx + font:get_width('.')
             end

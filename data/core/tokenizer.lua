@@ -78,7 +78,6 @@ function tokenizer.tokenize(syntax, text, state)
 
         -- find matching pattern
         local matched = false
-
         for p in pairs(syntax.symbols) do
 
             local s, e, k = text:find('^(' .. p .. ')%s', i)

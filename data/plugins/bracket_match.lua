@@ -2,7 +2,7 @@ local core     = require('core')
 local style    = require('core.style')
 local command  = require('core.command')
 local keymap   = require('core.keymap')
-local DocView  = require('core.docview')
+local docview  = require('core.docview')
 local callback = require('core.callback')
 
 local bracket_maps = {
@@ -46,8 +46,7 @@ local state = {}
 local function update_state(line_limit)
 
     line_limit = line_limit or math.huge
-
-  -- reset if we don't have a document (eg. DocView isn't focused)
+  -- reset if we don't have a document (eg. docview isn't focused)
     local doc = core.active_view.doc
     if not doc then
 
@@ -64,14 +63,14 @@ local function update_state(line_limit)
     and state.limit == line_limit then return end
 
     -- find matching bracket if we're on a bracket
-    local line2, col2
+    local line2, col2, close
     for _, map in ipairs(bracket_maps) do
 
         for i = 0, -1, -1 do
 
             local line, col = doc:position_offset(line, col, i)
             local open = doc.lines[line]:byte(col)
-            local close = map[open]
+            close = map[open]
 
             if close then
 
@@ -82,15 +81,16 @@ local function update_state(line_limit)
     end
 
     ::found::
-    -- update
+    -- update --
     state = {
         change_id = change_id,
-        doc = doc,
-        line = line,
-        col = col,
-        line2 = line2,
-        col2 = col2,
-        limit = line_limit,
+        char      = string.char(close or 0),
+        doc       = doc,
+        line      = line,
+        col       = col,
+        line2     = line2,
+        col2      = col2,
+        limit     = line_limit,
     }
 end
 
@@ -99,18 +99,20 @@ callback.docv.step('brackertmatch', {
     perform = function() update_state(100) end
 })
 
-callback.docv.line('brackertmatch', {
+callback.docv.body('brackertmatch', {
 
     perform = function(self, idx, x, y)
 
         if self.doc == state.doc and idx == state.line2 then
 
-            local color = style.bracketmatch_color or style.syntax["function"]
             local x1 = x + self:get_col_x_offset(idx, state.col2)
             local x2 = x + self:get_col_x_offset(idx, state.col2 + 1)
-            local h = math.ceil(1 * SCALE)
 
-            renderer.draw_rect(x1, y + self:get_line_height() - h, x2 - x1, h, color)
+            if not (self.doc:has_selection()) and state.char ~= 0 then
+
+                renderer.draw_rect(x1, y, x2 - x1, self:get_line_height(), style.highlight_select)
+                renderer.draw_text(self:get_font(), state.char, x1, y + self:get_line_text_y_offset(), style.text)
+            end
         end
     end
 })
