@@ -1,7 +1,8 @@
-### 1.0.1d - 02/01/21 patch
+### 1.0.1d - 03/01/21 patch
 \* Fixed bracket\_match.lua and selection.lua<br/>
 \* Refixed lang\_lua.lua function definitions<br/>
 \* Fixed colorprev.lua<br/>
+\* Fixed lide showing "lite" instead of "lide"
 
 ### 1.0.1d - 02/01/21 patch
 \+ lua intelisense<br/>
