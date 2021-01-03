@@ -1,8 +1,0 @@
-.git/
-!\.gitignore
-!\.gitattributes
-!\.lide_last_project
-!\.lide_last_project
-!\.lide_workspace.lua
-lide
-TODO
