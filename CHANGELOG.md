@@ -1,4 +1,8 @@
-### 1.0.1d - 03/01/21 patch
+### 1.0.3d - 08/01/21 patch
+\+ Added rustlang support
+\* Fixed lastproject
+
+### 1.0.2d - 03/01/21 patch
 \* Fixed bracket\_match.lua and selection.lua<br/>
 \* Refixed lang\_lua.lua function definitions<br/>
 \* Fixed colorprev.lua<br/>

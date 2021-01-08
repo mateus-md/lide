@@ -1,6 +1,6 @@
 local core = require "core"
 
-local last_project_filename = EXEDIR .. PATHSEP .. ".lite_last_project"
+local last_project_filename = EXEDIR .. PATHSEP .. ".lide_last_project"
 
 
 -- load last project path

@@ -467,7 +467,7 @@ command.add(nil, {
 
             if core.command_view.visible then
 
-                local p_path = ARGS[2]
+                local p_path = ARGS[2] or EXEDIR
 
                 if #p_path > 20 then p_path = p_path:match('.+([/\\][^/\\]+[/\\][^/\\]+)$') end
                 if #p_path > 20 then p_path = p_path:match('.+([/\\][^/\\]+)$') end
