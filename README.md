@@ -2,7 +2,7 @@
 ![screenshot](lide-printscreen.png)
 
 Lide is a lightweight text editor written in Lua. A fork from the [lite](https://github.com/rxi/lite) by rxi.
-Lite has (or will have) IDE features, like `goto definition`, `spy references` and other things like that.
+Lide has (or will have) IDE features, like `goto definition`, `spy references` and other things like that.
 
 ## Overview
 This repository is just a personal project of how I use the editor and what changes I found necessary for **my** use.<br/>
