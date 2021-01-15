@@ -39,7 +39,7 @@ static void get_exe_filename(char *buf, int sz) {
   unsigned size = sz;
   _NSGetExecutablePath(buf, &size);
 #else
-  strcpy(buf, "./lide");
+  strcpy(buf, "./lite");
 #endif
 }
 
@@ -126,8 +126,8 @@ int main(int argc, char **argv) {
     "  package.path = EXEDIR .. '/data/?.lua;' .. package.path\n"
     "  package.path = EXEDIR .. '/data/?/init.lua;' .. package.path\n"
     "  core = require('core')\n"
-    "  core.load()\n"
     "  core.init()\n"
+    "  core.run()\n"
     "end, function(err)\n"
     "  print('Error: ' .. tostring(err))\n"
     "  print(debug.traceback(nil, 2))\n"
