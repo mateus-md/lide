@@ -11,12 +11,12 @@ config.lfautoinsert_map = {
     ["=%s*\n"] = false,
     [":%s*\n"] = false,
     ["^#if.*\n"] = "#endif",
-    ["^#else.*\n"] = "#endif",
-    ["%f[%w]do%s*\n"] = "end",
-    ["%f[%w]then%s*\n"] = "end",
-    ["%f[%w]else%s*\n"] = "end",
+    ["^#(else).*\n"] = "#endif",
+    ["%f[%w](do)%s*\n"] = "end",
+    ["%f[%w](then)%s*\n"] = "end",
+    ["%f[%w](else)%s*\n"] = "end",
     ["%f[%w]repeat%s*\n"] = "until",
-    ["%f[%w]function.*%)%s*\n"] = "end",
+    ["%f[%w](function.*%))%s*\n"] = "end",
     ["^%s*<([^/][^%s>]*)[^>]*>%s*\n"] = "</$TEXT>",
 }
 
@@ -41,7 +41,7 @@ command.add("core.docview", {
         local cmmnt = doc.syntax.comment
         local index
 
-        -- Skip it if file doesn't have an comment --
+        -- Skip it if file lang doesn't have an comment --
         if cmmnt then index = text:find(cmmnt, 1, true) end
 
         -- Do this only it has an potential comment
@@ -80,7 +80,7 @@ command.add("core.docview", {
                         doc:remove(line + 1, 1, line + 2, 1)
                     end
 
-                elseif col < #doc.lines[line] then
+                elseif col < #doc.lines[line] and text:find(str .. '$') then
 
                     command.perform("doc:newline")
                     command.perform("doc:move-to-previous-line")

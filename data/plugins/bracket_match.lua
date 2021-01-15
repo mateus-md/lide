@@ -1,8 +1,8 @@
 local core     = require('core')
-local style    = require('core.style')
-local command  = require('core.command')
-local keymap   = require('core.keymap')
-local docview  = require('core.docview')
+local style    = require('core.style'   )
+local keymap   = require('core.keymap'  )
+local command  = require('core.command' )
+local docview  = require('core.docview' )
 local callback = require('core.callback')
 
 local bracket_maps = {
@@ -94,13 +94,14 @@ local function update_state(line_limit)
     }
 end
 
-callback.docv.step('brackertmatch', {
+callback.docv.step('bracket_match', {
 
     perform = function() update_state(100) end
 })
 
-callback.docv.body('brackertmatch', {
+callback.docv.line('bracket_match', {
 
+    doabove = true,
     perform = function(self, idx, x, y)
 
         if self.doc == state.doc and idx == state.line2 then
@@ -111,13 +112,12 @@ callback.docv.body('brackertmatch', {
             if not (self.doc:has_selection()) and state.char ~= 0 then
 
                 renderer.draw_rect(x1, y, x2 - x1, self:get_line_height(), style.highlight_select)
-                renderer.draw_text(self:get_font(), state.char, x1, y + self:get_line_text_y_offset(), style.text)
             end
         end
     end
 })
 
-command.add("core.docview", {
+command.add('core.docview', {
     ["bracket-match:move-to-matching"] =
     function()
 

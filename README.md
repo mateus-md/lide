@@ -10,7 +10,7 @@ Consequently, most pull requests and issues I may miss because they are outside 
 
 ## Building
 This program only supports Linux building because I'm a Linux user, but if you are really interested<br/>
-in using it you can coppy the windows libs from the parent repository and then build it using the .bat file found there too.
+in using it you can copy the windows libs from the parent repository and then build it using the .bat file found there too.
 
 ## License
 This project is free software; you can redistribute it and/or modify it under

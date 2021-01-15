@@ -9,7 +9,6 @@ callback.docv  = {}
 
 local _doc_save, doc_input = {}, {}
 local dcvw_step, root_step = {}, {}
-local dcvw_inpt, root_inpt = {}, {}
 local draw_body, draw_line = {}, {}
 local draw_dcvw, draw_root = {}, {}
 
@@ -82,6 +81,7 @@ function docview:update(...)
     end
 
     docviewupdate(self, ...)
+    fran['self'] = true
 
     for name, def in pairs(_tbl) do
 
@@ -109,15 +109,15 @@ function docview:on_text_input(...)
     end
 
     -- Avoid multiple calls --
-    if rout then callback.__doc_input(self, rout) end
+    if rout or ccnt == 0 then
 
-    if ccnt == 0 then callback.__doc_input(self, ...)
-    else
+        callback.__doc_input(self, rout)
+        fran['self'] = true
+    end
 
-        for name, def in pairs(_tbl) do
+    for name, def in pairs(_tbl) do
 
-            call_fun(name, def, fran, self, ...)
-        end
+        call_fun(name, def, fran, self, ...)
     end
 end
 
@@ -137,6 +137,7 @@ function rootview:update(...)
     end
 
     rootvw_update(self, ...)
+    fran['self'] = true
 
     for name, def in pairs(_tbl) do
 
@@ -161,6 +162,7 @@ function docview:draw(...)
     end
 
     draw_docview(self, ...)
+    fran['self'] = true
 
     for name, def in pairs(_tbl) do
 
@@ -184,6 +186,7 @@ function docview:draw_line_body(...)
     end
 
     draw_line_body(self, ...)
+    fran['self'] = true
 
     for name, def in pairs(_tbl) do
 
@@ -192,7 +195,7 @@ function docview:draw_line_body(...)
 end
 
 local draw_line_text = docview.draw_line_text
-function docview:draw_line_line(...)
+function docview:draw_line_text(...)
 
     local fran = {}
     local _tbl = {}
@@ -207,6 +210,7 @@ function docview:draw_line_line(...)
     end
 
     draw_line_text(self, ...)
+    fran['self'] = true
 
     for name, def in pairs(_tbl) do
 
@@ -230,6 +234,7 @@ function rootview.draw(...)
     end
 
     draw_root_view(...)
+    fran['self'] = true
 
     for name, def in pairs(_tbl) do
 
@@ -317,5 +322,8 @@ function callback.save(name, def)
 
     _doc_save[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
+
+local config = require('core.config')
+local style  = require('core.style')
 
 return callback

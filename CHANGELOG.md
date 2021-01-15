@@ -1,6 +1,13 @@
+### 1.0.3d - 14/01/21 patch
+\* Fixed waitfor from callback<br/>
+\* Better bracket\_match rendering<br/>
+\* Better lfautoinsert<br/>
+---
+Fixed readme typo<br/>
+
 ### 1.0.3d - 08/01/21 patch
-\+ Added rustlang support
-\* Fixed lastproject
+\+ Added rustlang support<br/>
+\* Fixed lastproject<br/>
 
 ### 1.0.2d - 03/01/21 patch
 \* Fixed bracket\_match.lua and selection.lua<br/>
