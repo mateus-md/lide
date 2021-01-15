@@ -39,7 +39,7 @@ static void get_exe_filename(char *buf, int sz) {
   unsigned size = sz;
   _NSGetExecutablePath(buf, &size);
 #else
-  strcpy(buf, "./lite");
+  strcpy(buf, "./lide");
 #endif
 }
 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
   }
   lua_setglobal(L, "ARGS");
 
-  lua_pushstring(L, "1.11");
+  lua_pushstring(L, "1.1.0");
   lua_setglobal(L, "VERSION");
 
   lua_pushstring(L, SDL_GetPlatform());
@@ -120,16 +120,16 @@ int main(int argc, char **argv) {
   (void) luaL_dostring(L,
     "local core\n"
     "xpcall(function()\n"
-    "  SCALE = tonumber(os.getenv(\"LITE_SCALE\")) or SCALE\n"
+    "  SCALE = tonumber(os.getenv(\"LIDE_SCALE\")) or SCALE\n"
     "  PATHSEP = package.config:sub(1, 1)\n"
     "  EXEDIR = EXEFILE:match(\"^(.+)[/\\\\].*$\")\n"
     "  package.path = EXEDIR .. '/data/?.lua;' .. package.path\n"
     "  package.path = EXEDIR .. '/data/?/init.lua;' .. package.path\n"
     "  core = require('core')\n"
+    "  core.load()\n"
     "  core.init()\n"
-    "  core.run()\n"
     "end, function(err)\n"
-    "  print('Error: ' .. tostring(err))\n"
+    "  print('ERROR: ' .. tostring(err))\n"
     "  print(debug.traceback(nil, 2))\n"
     "  if core and core.on_error then\n"
     "    pcall(core.on_error, err)\n"

@@ -1,5 +1,7 @@
 ## 1.1.0d
-\+ include changes from rxi's Lite (commit 38bd9b3...f074415)<br/>
+\+ Include changes from rxi's Lite (commit 38bd9b3...f074415)<br/>
+---
+\* Fixed issue with last commit (pull rxi's commit)<br/>
 
 ### 1.0.4df - 14/01/21 patch
 \* Fixed waitfor from callback<br/>
