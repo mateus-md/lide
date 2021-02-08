@@ -125,8 +125,15 @@ local function save(filename)
     local name = filename
     doc():save(filename)
 
-    if #name > 20 then name = name:match('.+([/\\][^/\\]+[/\\][^/\\]+)$') end
-    if #name > 20 then name = name:match('.+([/\\][^/\\]+)$') end
+    if #name > 20 then
+
+        name = name:match('.+([/\\][^/\\]+[/\\][^/\\]+)$') or name
+    end
+
+    if #name > 20 then
+
+        name = name:match('.+([/\\][^/\\]+)$') or name
+    end
 
     core.log("saved \"%s\"", ('...' .. name) or filename)
 end

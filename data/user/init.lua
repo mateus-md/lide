@@ -16,6 +16,7 @@ keymap.add({
 
     ["alt+escape"]   = "core:quit",
     ["ctrl+shift+f"] = "core:toggle-fullscreen",
+    ["ctrl+e"]       = "eval:replace",
 })
 
 -- Delete old commands --

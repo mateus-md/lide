@@ -4,25 +4,24 @@
 #include "renderer.h"
 
 #ifdef _WIN32
-  #include <windows.h>
+    #include <windows.h>
 #elif __linux__
-  #include <unistd.h>
+    #include <unistd.h>
 #elif __APPLE__
-  #include <mach-o/dyld.h>
+    #include <mach-o/dyld.h>
 #endif
-
 
 SDL_Window *window;
 
+static double get_scale(void){
+    float dpi;
+    SDL_GetDisplayDPI(0, NULL, &dpi, NULL);
 
-static double get_scale(void) {
-  float dpi;
-  SDL_GetDisplayDPI(0, NULL, &dpi, NULL);
-#if _WIN32
-  return dpi / 96.0;
-#else
-  return 1.0;
-#endif
+    #if _WIN32
+        return dpi / 96.0;
+    #else
+        return 1.0;
+    #endif
 }
 
 

@@ -11,12 +11,13 @@ config.lfautoinsert_map = {
     ["=%s*\n"] = false,
     [":%s*\n"] = false,
     ["^#if.*\n"] = "#endif",
-    ["^#(else).*\n"] = "#endif",
-    ["%f[%w](do)%s*\n"] = "end",
-    ["%f[%w](then)%s*\n"] = "end",
-    ["%f[%w](else)%s*\n"] = "end",
+    ["^#else.*\n"] = "#endif",
+    ["%f[%w]do%s*\n"] = "end",
+    ["%f[%w]then%s*\n"] = {"end", "else"},
+    ["%f[%w]else%s*\n"] = "end",
+    ["%f[%w]elseif%s*\n"] = {"end", "else"},
     ["%f[%w]repeat%s*\n"] = "until",
-    ["%f[%w](function.*%))%s*\n"] = "end",
+    ["%f[%w]function.*%)%s*\n"] = "end",
     ["^%s*<([^/][^%s>]*)[^>]*>%s*\n"] = "</$TEXT>",
 }
 
@@ -65,14 +66,39 @@ command.add("core.docview", {
             local s, _, str = text:find(ptn)
             if s then
 
+                local next = doc.lines[line + 1] or ''
+
                 if  close and col == #doc.lines[line]
                 and indent_size(doc, line + 1)
                  <= indent_size(doc, line - 1) then
 
-                    close = str and close:gsub("$TEXT", str) or close
-                    command.perform("doc:newline")
+                    close = str and type(close) == 'string' and close:gsub("$TEXT", str) or close
 
-                    core.active_view:on_text_input(close)
+                    if type(close) == 'table' then
+
+                        local tabsz = doc.lines[line - 1]:match('^(%s*)')
+                        -- Only consider keywords of the same scope --
+                        if not (next:match('^' .. tabsz .. '[^ ]')) then next = '' end
+
+                        local nis_1 = next:match(tabsz .. close[1])
+                        local nis_2 = next:match(tabsz .. close[2])
+
+                        if not nis_1 and not nis_2 then
+
+                            command.perform("doc:newline")
+                            core.active_view:on_text_input(close[1])
+
+                        elseif not nis_2 then
+
+                            command.perform("doc:newline")
+                            core.active_view:on_text_input(close[2])
+
+                        else return end
+                    else
+                        command.perform("doc:newline")
+                        core.active_view:on_text_input(close)
+                    end
+
                     command.perform("doc:move-to-previous-line")
 
                     if doc.lines[line + 1] == doc.lines[line + 2] then
@@ -80,7 +106,7 @@ command.add("core.docview", {
                         doc:remove(line + 1, 1, line + 2, 1)
                     end
 
-                elseif col < #doc.lines[line] and text:find(str .. '$') then
+                elseif col < #doc.lines[line] and str and text:find(str .. '$') then
 
                     command.perform("doc:newline")
                     command.perform("doc:move-to-previous-line")

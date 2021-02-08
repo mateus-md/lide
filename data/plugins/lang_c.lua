@@ -1,4 +1,4 @@
-local syntax = require "core.syntax"
+local syntax = require('core.syntax')
 
 syntax.add({
 
@@ -7,15 +7,12 @@ syntax.add({
     comment = "//",
 
     patterns = {
-
         {pattern = "//.-\n"              , type = "comment" },
         {pattern = { "/%*", "%*/" }      , type = "comment" },
 
-        {pattern = {'#', ' '}            , type = "keyword" },
-
         {pattern = {'"', '"', '\\'}      , type = "string"  },
         {pattern = {"'", "'", '\\'}      , type = "string"  },
-        {pattern = '%<%s-[^ ]+%s-%>'     , type = "string"  },
+        {pattern = "%<%s-[^ ]+%s-%>"     , type = "string"  },
 
         {pattern = "-?0x%x+"             , type = "number"  },
         {pattern = '-?0b%x+'             , type = "number"  },
@@ -25,15 +22,13 @@ syntax.add({
         {pattern = "[%+%-=/%*%^%%<>!~|&]", type = "operator"},
         {pattern = "[%a_][%w_]*%f[(]"    , type = "function"},
         {pattern = "[%a_][%w_]*"         , type = "symbol"  },
+
+        {pattern = {"#", "[ \n]", " "}   , type = "keyword" },
     },
 
     symbols = {
-
         ["if"]       = "keyword" ,
-        ["then"]     = "keyword" ,
         ["else"]     = "keyword" ,
-        ["elseif"]   = "keyword" ,
-        ["do"]       = "keyword" ,
         ["while"]    = "keyword" ,
         ["for"]      = "keyword" ,
         ["break"]    = "keyword" ,
@@ -53,7 +48,7 @@ syntax.add({
         ["default"]  = "keyword" ,
         ["auto"]     = "keyword" ,
         ["const"]    = "keyword" ,
-        ["void"]     = "keyword" ,
+        ["void"]     = "keyword2",
         ["int"]      = "keyword2",
         ["short"]    = "keyword2",
         ["long"]     = "keyword2",
@@ -67,4 +62,3 @@ syntax.add({
         ["NULL"]     = "literal" ,
     }
 })
-

@@ -40,10 +40,8 @@ local function find_non_escaped(text, pattern, offset, esc)
         if esc and is_escaped(text, s, esc) then
 
             offset = e + 1
-        else
 
-            return s, e
-        end
+        else return s, e end
     end
 end
 
@@ -70,12 +68,10 @@ function tokenizer.tokenize(syntax, text, state)
                 state = nil
                 i = e + 1
             else
-
                 push_token(res, p.type, text:sub(i))
                 break
             end
         end
-
         -- find matching pattern
         local matched = false
         for p in pairs(syntax.symbols) do
@@ -112,7 +108,6 @@ function tokenizer.tokenize(syntax, text, state)
                 break
             end
         end
-
         -- consume character if we didn't match
         if not matched then
 

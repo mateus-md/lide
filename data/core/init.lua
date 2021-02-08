@@ -74,7 +74,6 @@ local function project_scan_thread()
     end
 
     while true do
-
         -- get project files and replace previous table if the new table is
         -- different
         local t = get_files(".")
@@ -540,7 +539,6 @@ local run_threads = coroutine.wrap(function()
         local ran_any_threads = false
 
         for k, thread in pairs(core.threads) do
-
             -- run thread
             if thread.wake < system.get_time() then
 
@@ -552,7 +550,6 @@ local run_threads = coroutine.wrap(function()
 
                         table.remove(core.threads, k)
                     else
-
                         core.threads[k] = nil
                     end
 
@@ -563,7 +560,6 @@ local run_threads = coroutine.wrap(function()
 
                 ran_any_threads = true
             end
-
             -- stop running threads if we're about to hit the end of frame
             if system.get_time() - core.frame_start > max_time then
 

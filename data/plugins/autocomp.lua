@@ -82,7 +82,6 @@ core.add_thread(function()
         end
       end
     end
-
   end
 end)
 
@@ -190,9 +189,7 @@ local function draw_suggestions_box(av)
   end
 end
 
-
 -- patch event logic into RootView
-
 callback.input('autocomp:input', {
 
     perform = function()
