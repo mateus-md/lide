@@ -1,12 +1,11 @@
-local core       = require('core')
-local _doc       = require('core.doc')
-local rootview   = require('core.rootview')
-local docview    = require('core.docview')
+local core      = require('core')
+local _doc      = require('core.doc')
+local rootview  = require('core.rootview')
+local docview   = require('core.docview')
 
 local callback = {}
 callback.root  = {}
 callback.docv  = {}
-callback.sttv  = {}
 
 local _doc_new , doc_clean = {}, {}
 local _doc_save, doc_input = {}, {}
