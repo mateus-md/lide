@@ -1,5 +1,11 @@
+## 1.1.2d
+\* changed "on close" events' messages<br/>
+\* fixed bug with autoin (removing quotes on backspace if caret is at the beginning of the line)<br/>
+\+ implementation of code linter via plugin<br/>
+\+ caret color changes when overlaping color previews<br/>
+
 ## 1.1.2df - 08/02/21 patch
-\* fixed highlight bug in lang_c (scribbles coloring lines below)<br/>
+\* fixed highlight bug in lang\_c (scribbles coloring lines below)<br/>
 
 ## 1.1.1d
 \+ smarter lfautoinsert (puts else between then and end if there are no lines between them and don\'t puts end if the line below is else)<br/>

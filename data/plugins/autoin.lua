@@ -132,8 +132,12 @@ command.add(predicate, {
         local l, c = doc:get_selection()
         local char = doc:get_char(l, c)
         local othr = doc:get_char(l, c - 1)
-
-        -- Only match with its respective pairs --
+        -- avoid "eating" strings on backspace --
+        if c == 1 then
+            command.perform('doc:backspace')
+            return
+        end
+        -- only match with its respective pairs --
         if  is_closer(char)
         and are_pairs(char, othr) then
 

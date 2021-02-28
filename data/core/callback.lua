@@ -1,15 +1,18 @@
-local core     = require('core')
-local _doc     = require('core.doc')
-local rootview = require('core.rootview')
-local docview  = require('core.docview')
+local core       = require('core')
+local _doc       = require('core.doc')
+local rootview   = require('core.rootview')
+local docview    = require('core.docview')
 
 local callback = {}
 callback.root  = {}
 callback.docv  = {}
+callback.sttv  = {}
 
+local _doc_new , doc_clean = {}, {}
 local _doc_save, doc_input = {}, {}
 local dcvw_step, root_step = {}, {}
 local draw_body, draw_line = {}, {}
+local mouse_whl, mousemove = {}, {}
 local draw_dcvw, draw_root = {}, {}
 
 local standby, sndby_n
@@ -22,7 +25,6 @@ local function call_fun(fun, def, ran, ...)
 
         return out
     else
-
         sndby_n = def.wait
         standby = {func = def.func, name = fun}
     end
@@ -41,7 +43,7 @@ local function call_fun(fun, def, ran, ...)
 end
 
 -- Other callbacks --
-local doc_save = _doc.save
+local old_doc_save = _doc.save
 function _doc:save(...)
 
     local fran = {}
@@ -56,7 +58,8 @@ function _doc:save(...)
         else _tbl[name] = def end
     end
 
-    doc_save(self, ...)
+    old_doc_save(self, ...)
+    fran['self'] = true
 
     for name, def in pairs(_tbl) do
 
@@ -64,13 +67,58 @@ function _doc:save(...)
     end
 end
 
--- Updates --
+local old_doc_new = _doc.new
+function _doc:new(...)
+
+    local fran = {}
+    local _tbl = {}
+    for name, def in pairs(_doc_new) do
+
+        if def.doabove then
+
+            call_fun(name, def, fran, self, ...)
+
+        else _tbl[name] = def end
+    end
+
+    old_doc_new(self, ...)
+    fran['self'] = true
+
+    for name, def in pairs(_tbl) do
+
+        call_fun(name, def, fran, self, ...)
+    end
+end
+
+local old_doc_clean = _doc.clean
+function _doc:clean(...)
+
+    local fran = {}
+    local _tbl = {}
+    for name, def in pairs(doc_clean) do
+
+        if def.doabove then
+
+            call_fun(name, def, fran, self, ...)
+
+        else _tbl[name] = def end
+    end
+
+    old_doc_clean(self, ...)
+    fran['self'] = true
+
+    for name, def in pairs(_tbl) do
+
+        call_fun(name, def, fran, self, ...)
+    end
+end
+
+-- updates --
 local docviewupdate = docview.update
 function docview:update(...)
 
     local fran = {}
     local _tbl = {}
-
     for name, def in pairs(dcvw_step) do
 
         if def.doabove then
@@ -97,7 +145,6 @@ function docview:on_text_input(...)
 
     local fran = {}
     local _tbl = {}
-
     for name, def in pairs(doc_input) do
 
         if def.doabove then
@@ -126,7 +173,6 @@ function rootview:update(...)
 
     local fran = {}
     local _tbl = {}
-
     for name, def in pairs(root_step) do
 
         if def.doabove then
@@ -151,7 +197,6 @@ function docview:draw(...)
 
     local fran = {}
     local _tbl = {}
-
     for name, def in pairs(draw_dcvw) do
 
         if def.doabove then
@@ -175,7 +220,6 @@ function docview:draw_line_body(...)
 
     local fran = {}
     local _tbl = {}
-
     for name, def in pairs(draw_body) do
 
         if def.doabove then
@@ -199,7 +243,6 @@ function docview:draw_line_text(...)
 
     local fran = {}
     local _tbl = {}
-
     for name, def in pairs(draw_line) do
 
         if def.doabove then
@@ -218,12 +261,57 @@ function docview:draw_line_text(...)
     end
 end
 
+local on_mouse_wheel = docview.on_mouse_wheel
+function docview:on_mouse_wheel(...)
+
+    local fran = {}
+    local _tbl = {}
+    for name, def in pairs(mouse_whl) do
+
+        if def.doabove then
+
+            call_fun(name, def, fran, self, ...)
+
+        else _tbl[name] = def end
+    end
+
+    on_mouse_wheel(self, ...)
+    fran['self'] = true
+
+    for name, def in pairs(_tbl) do
+
+        call_fun(name, def, fran, self, ...)
+    end
+end
+
+local on_mouse_moved = docview.on_mouse_moved
+function docview:on_mouse_moved(...)
+
+    local fran = {}
+    local _tbl = {}
+    for name, def in pairs(mousemove) do
+
+        if def.doabove then
+
+            call_fun(name, def, fran, self, ...)
+
+        else _tbl[name] = def end
+    end
+
+    on_mouse_moved(self, ...)
+    fran['self'] = true
+
+    for name, def in pairs(_tbl) do
+
+        call_fun(name, def, fran, self, ...)
+    end
+end
+
 local draw_root_view = core.root_view.draw
 function rootview.draw(...)
 
     local fran = {}
     local _tbl = {}
-
     for name, def in pairs(draw_root) do
 
         if def.doabove then
@@ -242,9 +330,9 @@ function rootview.draw(...)
     end
 end
 
--- Callbacks --
+-- callbacks --
 function callback.docv.step(name, def)
-
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -254,7 +342,7 @@ function callback.docv.step(name, def)
 end
 
 function callback.input(name, def)
-
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -264,7 +352,7 @@ function callback.input(name, def)
 end
 
 function callback.root.step(name, def)
-
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -274,7 +362,7 @@ function callback.root.step(name, def)
 end
 
 function callback.docv.draw(name, def)
-
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -284,7 +372,7 @@ function callback.docv.draw(name, def)
 end
 
 function callback.docv.body(name, def)
-
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -294,7 +382,7 @@ function callback.docv.body(name, def)
 end
 
 function callback.docv.line(name, def)
-
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -303,8 +391,28 @@ function callback.docv.line(name, def)
     draw_line[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-function callback.root.draw(name, def)
+function callback.docv.mouse_wheel(name, def)
+    -- validade parameters --
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
+    local fn = def.perform
+    local wf = def.waitfor or ''
+
+    mouse_whl[name] = {func = fn, wait = wf, doabove = def.doabove}
+end
+
+function callback.docv.mouse_move(name, def)
+    -- validade parameters --
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
+
+    local fn = def.perform
+    local wf = def.waitfor or ''
+
+    mousemove[name] = {func = fn, wait = wf, doabove = def.doabove}
+end
+
+function callback.root.draw(name, def)
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -314,7 +422,7 @@ function callback.root.draw(name, def)
 end
 
 function callback.save(name, def)
-
+    -- validade parameters --
     assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
 
     local fn = def.perform
@@ -323,7 +431,24 @@ function callback.save(name, def)
     _doc_save[name] = {func = fn, wait = wf, doabove = def.doabove}
 end
 
-local config = require('core.config')
-local style  = require('core.style')
+function callback.new_file(name, def)
+    -- validade parameters --
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
+
+    local fn = def.perform
+    local wf = def.waitfor or ''
+
+    _doc_new[name] = {func = fn, wait = wf, doabove = def.doabove}
+end
+
+function callback.clean(name, def)
+    -- validade parameters --
+    assert(def.perform and type(def.perform) == 'function', 'invalid perform attribute')
+
+    local fn = def.perform
+    local wf = def.waitfor or ''
+
+    doc_clean[name] = {func = fn, wait = wf, doabove = def.doabove}
+end
 
 return callback

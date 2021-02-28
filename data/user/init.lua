@@ -7,20 +7,28 @@ require('user.colors.monokai')
 --require('user.colors.fall')
 --require('user.colors.solarized')
 
--- Personal configuration --
+-- personal configuration --
 config.motiontrail_steps = 0640
 config.memusage_active   = true
 config.indent_size = 4
 
 keymap.add({
-
     ["alt+escape"]   = "core:quit",
     ["ctrl+shift+f"] = "core:toggle-fullscreen",
     ["ctrl+e"]       = "eval:replace",
+    ["ctrl+space"]   = "linter:move-to-next-warning",
 })
 
--- Delete old commands --
+-- delete old commands --
 keymap.map["ctrl+w"] = nil
 keymap.map["alt+return"] = nil
 
 style.divider_size = common.round(2 * SCALE)
+
+table.insert(
+    config.luacheck_args,
+    '--new-globals=love renderer system ARGS PLATFORM SCALE EXEFILE PATHSEP'
+)
+style.linter = {}
+style.linter["warning"] = {common.color('#EFDD66')}
+style.linter["error"]   = {common.color('#EF4444')}

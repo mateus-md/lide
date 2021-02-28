@@ -19,17 +19,17 @@ local function move_to_line_offset(dv, line, col, offset)
 end
 
 docview.translate = {
-  ["previous_page"] = function(doc, line, col, dv)
+  ["previous_page"] = function(_, line, _, dv)
     local min, max = dv:get_visible_line_range()
     return line - (max - min), 1
   end,
 
-  ["next_page"] = function(doc, line, col, dv)
+  ["next_page"] = function(_, line, _, dv)
     local min, max = dv:get_visible_line_range()
     return line + (max - min), 1
   end,
 
-  ["previous_line"] = function(doc, line, col, dv)
+  ["previous_line"] = function(_, line, col, dv)
     if line == 1 then
       return 1, 1
     end
@@ -48,35 +48,36 @@ local blink_period = 0.8
 
 
 function docview:new(doc)
-  docview.super.new(self)
-  self.cursor = "ibeam"
-  self.scrollable = true
-  self.doc = assert(doc)
-  self.font = "code_font"
-  self.last_x_offset = {}
-  self.blink_timer = 0
+    docview.super.new(self)
+    self.cursor = "ibeam"
+    self.scrollable = true
+    self.doc = assert(doc)
+    self.font = "code_font"
+    self.last_x_offset = {}
+    self.blink_timer = 0
 end
 
-
 function docview:try_close(do_close)
-  if self.doc:is_dirty()
-  and #core.get_views_referencing_doc(self.doc) == 1 then
-    core.command_view:enter("Unsaved Changes; Confirm Close", function(_, item)
-      if item.text:match("^[cC]") then
-        do_close()
-      elseif item.text:match("^[sS]") then
-        self.doc:save()
-        do_close()
-      end
-    end, function(text)
-      local items = {}
-      if not text:find("^[^cC]") then table.insert(items, "Close Without Saving") end
-      if not text:find("^[^sS]") then table.insert(items, "Save And Close") end
-      return items
-    end)
-  else
-    do_close()
-  end
+
+    if self.doc:is_dirty()
+    and #core.get_views_referencing_doc(self.doc) == 1 then
+
+        core.command_view:enter('unsaved changes | confirm close',
+        function(_, item)
+            if item.text:match("^[cC]") then
+                do_close()
+            elseif item.text:match("^[sS]") then
+                self.doc:save()
+                do_close()
+            end
+        end,
+        function(text)
+            local items = {}
+            if not text:find("^[^cC]") then table.insert(items, "close without saving") end
+            if not text:find("^[^sS]") then table.insert(items, "save and close") end
+            return items
+        end)
+    else do_close() end
 end
 
 
@@ -300,7 +301,6 @@ function docview:draw_line_text(idx, x, y)
         local color = style.syntax[type]
 
         if type ~= {} and text then
-
             tx = renderer.draw_text(font, text, tx, ty, color)
         end
     end

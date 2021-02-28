@@ -1,18 +1,16 @@
-local core     = require('core')
 local common   = require('core.common')
+local style    = require('core.style')
 local callback = require('core.callback')
 
-local white = {common.color "#ffffff"}
-local black = {common.color "#000000"}
-local tmp = {}
+local white = {common.color('#ffffff')}
+local black = {common.color('#000000')}
 
 local function draw_color_previews(self, idx, x, y, ptn, base, nibbles)
 
     local text = self.doc.lines[idx]
-    local s, e = 0, 0
+    local e, s = 0
 
     while true do
-
         s, e = text:find(ptn, e + 1)
         if not s then break end
 
@@ -60,16 +58,24 @@ local function draw_color_previews(self, idx, x, y, ptn, base, nibbles)
         local tmp = {}; tmp[1], tmp[2], tmp[3] = r, g, b
         local l1, _, l2 = self.doc:get_selection(true)
 
+        local line, col = self.doc:get_selection()
+
         if not (self.doc:has_selection() and idx >= l1 and idx <= l2) then
 
             renderer.draw_rect(x1, y, x2 - x1, self:get_line_height(), tmp)
             renderer.draw_text(self:get_font(), str, x1, y + oy, text_color)
+
+            -- redraw the caret --
+            if idx == line and col >= s and col <= e + 1 then
+                local lh = self:get_line_height()
+                local cx = x + self:get_col_x_offset(line, col)
+                renderer.draw_rect(cx, y, style.caret_width, lh, text_color)
+            end
         end
     end
 end
 
 callback.docv.body('colorprev', {
-
     perform = function(self, idx, x, y)
 
         draw_color_previews(self, idx, x, y, '#(%x%x)(%x%x)(%x%x)%f[%W]',        16)

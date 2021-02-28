@@ -1,4 +1,3 @@
-local core     = require('core')
 local style    = require('core.style')
 local config   = require('core.config')
 local callback = require('core.callback')

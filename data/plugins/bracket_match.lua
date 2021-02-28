@@ -68,13 +68,12 @@ local function update_state(line_limit)
 
         for i = 0, -1, -1 do
 
-            local line, col = doc:position_offset(line, col, i)
-            local open = doc.lines[line]:byte(col)
+            local l, c = doc:position_offset(line, col, i)
+            local open = doc.lines[l]:byte(c)
             close = map[open]
 
             if close then
-
-                line2, col2 = get_matching_bracket(doc, line, col, line_limit, open, close, map.step)
+                line2, col2 = get_matching_bracket(doc, l, c, line_limit, open, close, map.step)
                 goto found
             end
         end
@@ -95,12 +94,10 @@ local function update_state(line_limit)
 end
 
 callback.docv.step('bracket_match', {
-
     perform = function() update_state(100) end
 })
 
 callback.docv.line('bracket_match', {
-
     doabove = true,
     perform = function(self, idx, x, y)
 
@@ -123,7 +120,6 @@ command.add('core.docview', {
 
         update_state()
         if state.line2 then
-
             core.active_view.doc:set_selection(state.line2, state.col2)
         end
     end

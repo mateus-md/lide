@@ -1,6 +1,5 @@
 -- Original code by rxi --
 -- Edited by mateus.mds --
-
 require('core.strict')
 
 local common = require('core.common')
@@ -177,20 +176,17 @@ end
 function core.quit(force)
 
     if force then
-
         delete_temp_files()
         os.exit()
     end
-
+    -- original code by chekoopa (CloseConfirmX) --
     local dirty_count = 0
     local dirty_name
+    for _, doc in ipairs(core.docs) do
 
-    for _, _doc in ipairs(core.docs) do
-
-        if _doc:is_dirty() then
-
+        if doc:is_dirty() then
             dirty_count = dirty_count + 1
-            dirty_name = _doc:get_name()
+            dirty_name  = doc:get_name()
         end
     end
 
@@ -198,18 +194,24 @@ function core.quit(force)
 
         local text
         if dirty_count == 1 then
-
-            text = string.format("\"%s\" has unsaved changes. Quit anyway?", dirty_name)
+            dirty_name = dirty_name:match("[^/%\\]*$")
+            text = string.format("unsaved changes in \"%s\" | confirm exit", dirty_name)
         else
-
-            text = string.format("%d docs have unsaved changes. Quit anyway?", dirty_count)
+            text = string.format("unsaved changes in %d docs | confirm exit", dirty_count)
         end
 
-        local confirm = system.show_confirm_dialog("unsaved file changes", text)
-        if not confirm then return end
-    end
+        core.command_view:enter(text,
+        function(_, item)
+            if item.text:find("close") then core.quit(true) end
+        end,
+        function(t)
+            local items = {}
+            if not t:find("^[^sS]") then table.insert(items, "cancel") end
+            if not t:find("^[^cC]") then table.insert(items, "close without saving") end
+            return items
+        end)
 
-    core.quit(true)
+    else core.quit(true) end
 end
 
 function core.load_plugins()
