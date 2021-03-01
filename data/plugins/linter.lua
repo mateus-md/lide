@@ -18,7 +18,8 @@ local command_sep  = is_windows and "&" or ";"
 local exitcode_cmd = is_windows and "echo %errorlevel%" or "echo $?"
 
 local current_doc = nil
-local cache = setmetatable({}, { __mode = "k" })
+local warn_cache = setmetatable({}, {__mode = "k"})
+local errorcache = setmetatable({}, {__mode = "k"})
 local hover_boxes = setmetatable({}, { __mode = "k" })
 local linter_queue = {}
 local linters = {}
@@ -94,6 +95,10 @@ local function async_run_lint_cmd(_doc, path, linter, fun_cllbck, timeout)
                       exitcode_cmd,
                       status_file)
   system.exec(cmd)
+
+    local file = io.open('out.txt', 'w+')
+    file:write(io.open(output_file, 'r'):read('*all'))
+    file:close()
 
   table.insert(linter_queue, {
     output = output_file,
@@ -174,7 +179,6 @@ local function escape_to_pattern(text, count)
   return table.concat(escaped, "")
 end
 
-local err_data = {}
 local function async_get_file_warnings(_doc, warnings, linter, fun_cllbck)
 
     local path = system.absolute_path(_doc.filename)
@@ -199,29 +203,45 @@ local function async_get_file_warnings(_doc, warnings, linter, fun_cllbck)
 
                 if data.exitcode == exitcode then
                     valid_code = true
-                    err_data.err = false
+                    if errorcache[core.active_view.doc] then
+                        errorcache[core.active_view.doc].err = false
+                    end
                 end
             end
 
             if not valid_code then
-                local l, c, e = text:match(pattern)
 
+                local l, c, e
+                if type(pattern) == "string" then
+                    assert(text:match(pattern), 'invalid error pattern')
+                    l, c, e = text:match(pattern)
+
+                elseif type(pattern) == "function" then
+                    l, c, e = pattern(text, core.active_view.doc.filename)
+                end
+
+                if not l then return end
+
+                local err_data = {}
                 err_data.lin = tonumber(l)
                 err_data.col = tonumber(c)
+
                 err_data.err = true
                 err_data.msg = e
                 -- store the text of the line with errors --
                 err_data.text = core.active_view.doc.lines[err_data.lin]
 
-                return fun_cllbck(nil, e, l)
+                errorcache[core.active_view.doc] = err_data
+                return fun_cllbck(nil, e, l, c)
             end
         end
 
         local order = linter.warning_pattern_order
+
         for line, col, warn in match_pattern(text, pattern, order, path) do
 
             line = tonumber(line)
-            col = tonumber(col)
+            col  = tonumber(col)
             if linter.column_starts_at_zero then
                 col = col + 1
             end
@@ -248,7 +268,6 @@ local function matches_any(filename, patterns)
   end
 end
 
-
 local function matching_linters(filename)
   local matched = {}
   for _, l in ipairs(linters) do
@@ -260,16 +279,16 @@ local function matching_linters(filename)
 end
 
 
-local function update_cache(_doc)
+local function update_warn_cache(_doc)
     local lints = matching_linters(_doc.filename or '')
     if not lints[1] then return end
 
     local d = {}
     for _, l in ipairs(lints) do
-        async_get_file_warnings(_doc, d, l, function(success, error, line)
+        async_get_file_warnings(_doc, d, l, function(success, error, line, col)
 
             if not success then
-                core.log("found an error in %s at line %d: %s", _doc.filename, line, error)
+                core.log("found an error in %s at %d:%d: %s", _doc.filename, line, col, error)
                 print(error)
                 return
             end
@@ -280,7 +299,8 @@ local function update_cache(_doc)
                 i = i + 1
             end
 
-            cache[_doc] = d
+            warn_cache[_doc] = d
+
             if i > 1 then
                 core.log("[%s] found %d warnings.", _doc.filename, i)
             elseif i == 1 then
@@ -292,30 +312,41 @@ end
 
 
 local function get_word_limits(v, line_text, x, col)
-  if col == 0 then col = 1 end
-  local _, e = line_text:sub(col):find(config.symbol_pattern)
-  if not e or e <= 0 then e = 1 end
-  e = e + col - 1
 
-  local font = v:get_font()
-  local x1 = x + font:get_width(line_text:sub(1, col - 1))
-  local x2 = x + font:get_width(line_text:sub(1, e))
-  return x1, x2
+    if col == 0 then col = 1 end
+
+    local e
+    local symb = line_text:sub(col)
+    if not symb:find(config.string_patretn) then
+        local _, t = line_text:sub(col):find(config.symbol_pattern)
+        e = t
+    else
+        local _, t = line_text:sub(col):find(config.string_patretn)
+        e = t
+    end
+
+    if not e or e <= 0 then e = 1 end
+    e = e + col - 1
+
+    local font = v:get_font()
+    local x1 = x + font:get_width(line_text:sub(1, col - 1))
+    local x2 = x + font:get_width(line_text:sub(1, e))
+    return x1, x2
 end
 
-callback.clean('linter_cache', {
+callback.clean('linter_warn_cache', {
     doabove = true,
     perform = function(self)
         current_doc = self
-        update_cache(self)
+        update_warn_cache(self)
     end
 })
 
-callback.new_file('linter_cache', {
+callback.new_file('linter_warn_cache', {
     doabove = true,
     perform = function(self)
         current_doc = self
-        update_cache(self)
+        update_warn_cache(self)
     end
 })
 
@@ -329,7 +360,9 @@ callback.docv.mouse_move('linter_onmousemove', {
     perform = function(self, px, py)
 
         local hovered = {}
-        if err_data.err then
+        local err_data = errorcache[self.doc]
+
+        if err_data and err_data.err then
             local x, y = self:get_line_screen_position(err_data.lin)
             local h    = self:get_line_height()
 
@@ -349,8 +382,8 @@ callback.docv.mouse_move('linter_onmousemove', {
         end
 
         local _doc = self.doc
-        local cached = cache[_doc]
-        if not (cached) then return end
+        local warn_cached = warn_cache[_doc]
+        if not (warn_cached) then return end
 
         -- check mouse is over this view
         local x, y, w, h = self.position.x, self.position.y, self.size.x, self.size.y
@@ -360,7 +393,7 @@ callback.docv.mouse_move('linter_onmousemove', {
         end
         -- detect if any warning is hovered
         local hovered_w = {}
-        for line, warnings in pairs(cached) do
+        for line, warnings in pairs(warn_cached) do
 
             local text = _doc.lines[line]
             if text == warnings.line_text then
@@ -390,11 +423,12 @@ callback.docv.line('linter_underliner', {
 
         local _doc = self.doc
         local text = _doc.lines[idx]
+        local err_data = errorcache[_doc]
 
         -- if the code has an error and the index of --
         -- the current line to render is the same as --
         -- the error --
-        if err_data.err and idx == err_data.lin then
+        if err_data and err_data.err and idx == err_data.lin then
 
             if text == err_data.text then
                 local x1, x2 = get_word_limits(self, text, x, err_data.col)
@@ -404,15 +438,14 @@ callback.docv.line('linter_underliner', {
 
                 renderer.draw_rect(x1, y + line_h - h, x2 - x1, h, color)
             else
-                err_data = {}
                 hover_boxes[self] = nil
             end
         end
 
-        local cached = cache[_doc]
-        if not cached then return end
+        local warn_cached = warn_cache[_doc]
+        if not warn_cached then return end
 
-        local line_warnings = cached[idx]
+        local line_warnings = warn_cached[idx]
         if not line_warnings then return end
 
         -- don't draw underlines if line text has changed
@@ -507,10 +540,10 @@ function statusview:get_items()
   local left, right  = get_items(self)
 
   local _doc = core.active_view.doc
-  local cached = cache[_doc or ""]
-  if cached then
+  local warn_cached = warn_cache[_doc or ""]
+  if warn_cached then
     local count = 0
-    for _, v in pairs(cached) do
+    for _, v in pairs(warn_cached) do
       count = count + #v
     end
     table.insert(left, statusview.separator)
@@ -526,17 +559,17 @@ function statusview:get_items()
 end
 
 
-local function has_cached()
-  return core.active_view.doc and cache[core.active_view.doc]
+local function has_warn_cached()
+  return core.active_view.doc and warn_cache[core.active_view.doc]
 end
 
-command.add(has_cached, {
+command.add(has_warn_cached, {
   ["linter:move-to-next-warning"] = function()
     local _doc = core.active_view.doc
     local line = _doc:get_selection()
-    local cached = cache[_doc]
+    local warn_cached = warn_cache[_doc]
     local idx, min = math.huge, math.huge
-    for k in pairs(cached) do
+    for k in pairs(warn_cached) do
       if type(k) == "number" then
         min = math.min(k, min)
         if k < idx and k > line then idx = k end
@@ -547,8 +580,8 @@ command.add(has_cached, {
       core.error("document does not contain any warnings")
       return
     end
-    if cached[idx] then
-      _doc:set_selection(idx, cached[idx][1].col)
+    if warn_cached[idx] then
+      _doc:set_selection(idx, warn_cached[idx][1].col)
       core.active_view:scroll_to_line(idx, true)
     end
   end,

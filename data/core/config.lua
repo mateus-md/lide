@@ -1,5 +1,4 @@
 return {
-
     fps = 60,
     project_scan_rate = 5,
 
@@ -9,6 +8,7 @@ return {
     mouse_wheel_scroll = 50 * SCALE,
 
     ignore_files = "^%.",
+    string_patretn = "^['\"].-['\"]",
     symbol_pattern = "[%a_][%w_]*",
     non_word_chars = " \t\n/\\()\"':,.;<>~!@#$%^&*|+=[]{}`?-",
 
