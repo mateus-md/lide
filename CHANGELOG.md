@@ -1,8 +1,11 @@
-## 1.1.2d
+## 1.1.3d
 \* changed "on close" events' messages<br/>
 \* fixed bug with autoin (removing quotes on backspace if caret is at the beginning of the line)<br/>
 \+ implementation of code linter via plugin<br/>
 \+ caret color changes when overlaping color previews<br/>
+---<br/>
+\* lowercased some log messages<br/>
+\* fixed core file (unrenamed file from lite to lide)<br/>
 
 ## 1.1.2df - 08/02/21 patch
 \* fixed highlight bug in lang\_c (scribbles coloring lines below)<br/>
@@ -12,14 +15,14 @@
 
 ## 1.1.0d
 \+ include changes from rxi's Lite (commit 38bd9b3...f074415)<br/>
----
+---<br/>
 \* fixed issue with last commit (pull rxi's commit)<br/>
 
 ### 1.0.4df - 14/01/21 patch
 \* fixed waitfor from callback<br/>
 \* better bracket\_match rendering<br/>
 \* better lfautoinsert<br/>
----
+---<br/>
 \* fixed readme typo<br/>
 
 ### 1.0.3df - 08/01/21 patch
@@ -48,7 +51,7 @@
 ### 1.2.3cf - 30/12/20 patch
 \* moved all graphical and update callbacks to `callback`<br/>
 \* changed all plugins to use `callback`'s methods<br/>
-----
+---<br/>
 \- fixed input callbacks in `autocomp.lua` and `autoin.lua`<br/>
 \- fixed `ifautoinsert.lua` bug for commentless languages<br/>
 

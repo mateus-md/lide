@@ -55,7 +55,7 @@ command.add(nil, {
   end,
 
   ["core:find-file"] = function()
-    core.command_view:enter("Open File From Project", function(text, item)
+    core.command_view:enter("open file from project", function(text, item)
       text = item and item.text or text
       core.root_view:open_doc(core.open_doc(text))
     end, function(text)
@@ -74,7 +74,7 @@ command.add(nil, {
   end,
 
   ["core:open-file"] = function()
-    core.command_view:enter("Open File", function(text)
+    core.command_view:enter("open file", function(text)
       core.root_view:open_doc(core.open_doc(text))
     end, common.path_suggest)
   end,
@@ -89,7 +89,7 @@ command.add(nil, {
   end,
 
   ["core:open-project-module"] = function()
-    local filename = ".lite_project.lua"
+    local filename = ".lide_project.lua"
     if system.get_file_info(filename) then
       core.root_view:open_doc(core.open_doc(filename))
     else

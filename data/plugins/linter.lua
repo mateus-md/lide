@@ -310,7 +310,6 @@ local function update_warn_cache(_doc)
     end
 end
 
-
 local function get_word_limits(v, line_text, x, col)
 
     if col == 0 then col = 1 end
@@ -465,7 +464,6 @@ callback.docv.line('linter_underliner', {
     end
 })
 
-
 local function text_in_lines(text, max_len)
   local text_lines = {}
   local line = ""
@@ -489,7 +487,6 @@ local function text_in_lines(text, max_len)
   end
   return text_lines
 end
-
 
 local function draw_warning_box(hovered_item)
     local font = style.font
@@ -558,7 +555,6 @@ function statusview:get_items()
   return left, right
 end
 
-
 local function has_warn_cached()
   return core.active_view.doc and warn_cache[core.active_view.doc]
 end
@@ -587,10 +583,9 @@ command.add(has_warn_cached, {
   end,
 })
 
-
 return {
-  add_language = function(lang)
-    table.insert(linters, lang)
-  end,
-  escape_to_pattern = escape_to_pattern
+    add_language = function(lang)
+        table.insert(linters, lang)
+    end,
+    escape_to_pattern = escape_to_pattern
 }
