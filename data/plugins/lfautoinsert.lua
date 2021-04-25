@@ -38,9 +38,6 @@ command.add("core.docview", {
         local line, col = doc:get_selection()
         local text = doc.lines[line - 1]
 
-        if  doc.lines[line + 1] and
-        not doc.lines[line + 1]:match('^[\t ]*\n?$') then return end
-
         -- Ignore non-code lines --
         local cmmnt = doc.syntax.comment
         local index
