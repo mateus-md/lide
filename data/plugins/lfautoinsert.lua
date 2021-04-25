@@ -18,7 +18,7 @@ config.lfautoinsert_map = {
     ["%f[%w]elseif%s*\n"] = {"end", "else"},
     ["%f[%w]repeat%s*\n"] = "until",
     ["%f[%w]function.*%)%s*\n"] = "end",
-    ["^%s*<([^/][^%s>]*)[^>]*[^/-]>%s*\n"] = "</$TEXT>",
+    ["^%s*<([^/][^%s>]*)[^>/-]*>%s*\n"] = "</$TEXT>",
 }
 
 local function indent_size(doc, line)

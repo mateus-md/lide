@@ -1,6 +1,8 @@
 ## 1.1.4d
 \* smarter `ifautoinsert.lua`</br>
 \+ dart lang support<br/>
+---<br/>
+\- bug with last commit (autoinsert not working correctly)<br/>
 
 ## 1.1.3d
 \* changed "on close" events' messages<br/>
