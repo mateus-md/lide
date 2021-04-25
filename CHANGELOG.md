@@ -1,3 +1,7 @@
+## 1.1.4d
+\* smarter `ifautoinsert.lua`</br>
+\+ dart lang support<br/>
+
 ## 1.1.3d
 \* changed "on close" events' messages<br/>
 \* fixed bug with autoin (removing quotes on backspace if caret is at the beginning of the line)<br/>

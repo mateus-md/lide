@@ -4,8 +4,8 @@ local config = require "core.config"
 local keymap = require "core.keymap"
 
 config.lfautoinsert_map = {
-    ["{%s*\n"] = "}",
-    ["%(%s*\n"] = ")",
+    ["{\n"] = "}",
+    ["%(\n"] = ")",
     ["%f[[]%[%s*\n"] = "]",
     ["%[%[%s*\n"] = "]]",
     ["=%s*\n"] = false,
@@ -18,7 +18,7 @@ config.lfautoinsert_map = {
     ["%f[%w]elseif%s*\n"] = {"end", "else"},
     ["%f[%w]repeat%s*\n"] = "until",
     ["%f[%w]function.*%)%s*\n"] = "end",
-    ["^%s*<([^/][^%s>]*)[^>]*>%s*\n"] = "</$TEXT>",
+    ["^%s*<([^/][^%s>]*)[^>]*[^/-]>%s*\n"] = "</$TEXT>",
 }
 
 local function indent_size(doc, line)
@@ -37,6 +37,9 @@ command.add("core.docview", {
         local doc = core.active_view.doc
         local line, col = doc:get_selection()
         local text = doc.lines[line - 1]
+
+        if  doc.lines[line + 1] and
+        not doc.lines[line + 1]:match('^[\t ]*\n?$') then return end
 
         -- Ignore non-code lines --
         local cmmnt = doc.syntax.comment
