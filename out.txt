@@ -1,2 +1,0 @@
-/home/mateus/Programs/lide/data/core/commands/core.lua:40:49: unused argument 'text'
-/home/mateus/Programs/lide/data/core/commands/core.lua:88:43: accessing undefined variable 'EXEDIR'

@@ -27,7 +27,7 @@ style.divider_size = common.round(2 * SCALE)
 
 table.insert(
     config.luacheck_args,
-    '--new-globals=love renderer system ARGS PLATFORM SCALE EXEFILE PATHSEP'
+    '--new-globals=love minetest renderer system ARGS PLATFORM SCALE EXEFILE PATHSEP'
 )
 style.linter = {}
 style.linter["warning"] = {common.color('#EFDD66')}

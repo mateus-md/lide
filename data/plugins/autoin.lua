@@ -16,18 +16,14 @@ config.autoinsert_map = {
 }
 
 local function is_closer(chr)
-
     for _, v in pairs(config.autoinsert_map) do
-
         if v == chr then return true end
     end
 end
 
 local function are_pairs(chr, otr)
-
     return chr == config.autoinsert_map[otr]
 end
-
 
 local function count_char(text, chr)
     local count = 0
@@ -74,10 +70,7 @@ callback.input('autoin', {
         local mapping = config.autoinsert_map[text]
 
         -- prevents plugin from operating on `CommandView`
-        if getmetatable(self) ~= docview then
-
-            return text
-        end
+        if getmetatable(self) ~= docview then return text end
 
         -- wrap selection if we have a selection
         if mapping and self.doc:has_selection() then

@@ -96,10 +96,6 @@ local function async_run_lint_cmd(_doc, path, linter, fun_cllbck, timeout)
                       status_file)
   system.exec(cmd)
 
-    local file = io.open('out.txt', 'w+')
-    file:write(io.open(output_file, 'r'):read('*all'))
-    file:close()
-
   table.insert(linter_queue, {
     output = output_file,
     status = status_file,
